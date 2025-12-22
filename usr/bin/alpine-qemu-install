@@ -52,7 +52,7 @@ qemu-system-x86_64 \
 	-device virtio-vga \
 	-enable-kvm \
 	-display default,show-cursor=on \
-	-nographic
+	-display none \
 	-virtfs local,id=share,path="$SHARE",security_model=none,mount_tag=hostshare
 
 ## --- Run QEMU with graphics + shared folder ---
