@@ -1,6 +1,10 @@
 #!/usr/bin/bash
 
+iwctl station wlan0 scan
 if [ "$#" -lt 1 ] ; then
+	iwctl station wlan0 get-networks
+	echo
+	echo
     echo "Usage: $0 USSID"
     exit 1
 fi

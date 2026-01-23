@@ -1,6 +1,10 @@
 #!/bin/bash
 nmap_sA () 
 { 
+<<<<<<< HEAD
     nmap -Pn -sA --reason $@
+=======
+    nmap -sA --reason -Pn
+>>>>>>> d4ee7bf (modified:   alpine-qemu-install)
 }
 nmap_sA "$@"

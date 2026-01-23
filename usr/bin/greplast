@@ -1,0 +1,6 @@
+#!/usr/bin/bash
+
+echo "prev"
+grepip $LOG_CONN_DIR/prev.log
+echo "last"
+grepip $LOG_CONN
