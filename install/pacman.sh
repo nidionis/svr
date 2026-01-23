@@ -4,49 +4,36 @@
 #	echo "This script must be run as root"
 #fi
 
-pacman --noconfirm -Sy git
-pacman --noconfirm -Sy makepkg
-pacman --noconfirm -Sy nftables
-pacman --noconfirm -Sy bc
-pacman --noconfirm -Sy ctags
-pacman --noconfirm -Sy firefox
-pacman --noconfirm -Sy unzip
-pacman --noconfirm -Su vlc
-pacman --noconfirm -Sy tcpdump
-pacman --noconfirm -Sy moreutils
-pacman --noconfirm -Sy net-tools
-pacman --noconfirm -Sy make
-pacman --noconfirm -Sy whois
-pacman --noconfirm -Sy nmap
-pacman --noconfirm -Sy man-db
-pacman --noconfirm -Sy openvpn
-pacman --noconfirm -Sy bitwarden
-pacman --noconfirm -Sy wireguard-tools
-pacman --noconfirm -Sy proton-vpn-gtk-app
-pacman --noconfirm -Sy systemd-resolvconf
-pacman --noconfirm -Sy cronie
-pacman --noconfirm -Sy docker
-pacman --noconfirm -Sy makepkg
-pacman --noconfirm -Sy tree
-pacman --noconfirm -Sy vim
-pacman --noconfirm -Sy iwctl
-pacman --noconfirm -Sy pciutils
-pacman --noconfirm -Sy git-filter-repo
-pacman --noconfirm -Sy xorg-setxkbmap
-pacman --noconfirm -Sy xorg-xhost
-pacman --noconfirm -Sy bind
+pacman --noconfirm -S git
+pacman --noconfirm -S mtr
+pacman --noconfirm -S traceroute
+pacman --noconfirm -S makepkg
+pacman --noconfirm -S nftables
+pacman --noconfirm -S bc
+pacman --noconfirm -S ctags
+pacman --noconfirm -S firefox
+pacman --noconfirm -S unzip
+pacman --noconfirm -S vlc
+pacman --noconfirm -S tcpdump
+pacman --noconfirm -S moreutils
+pacman --noconfirm -S net-tools
+pacman --noconfirm -S make
+pacman --noconfirm -S whois
+pacman --noconfirm -S nmap
+pacman --noconfirm -S man-db
+pacman --noconfirm -S openvpn
+pacman --noconfirm -S wireguard-tools
+pacman --noconfirm -S proton-vpn-gtk-app
+pacman --noconfirm -S systemd-resolvconf
+pacman --noconfirm -S cronie
+pacman --noconfirm -S docker
+pacman --noconfirm -S makepkg
+pacman --noconfirm -S tree
+pacman --noconfirm -S vim
+pacman --noconfirm -S iwctl
+pacman --noconfirm -S pciutils
+pacman --noconfirm -S git-filter-repo
+pacman --noconfirm -S xorg-setxkbmap
+pacman --noconfirm -S xorg-xhost
+pacman --noconfirm -S xorg-xhost
 mandb #rend possible la commande apropos
-
-##git clone https://github.com/Exafunction/codeium.vim ~/.vim/pack/Exafunction/start/codeium.vim
-#sudo -i -u $SUDO_USER bash << EOF
-#
-#git config --global user.email "contact@presko.info"
-#git config --global user.name "prsko_$HOST"
-#EOF
-
-#su $SUDO_USER
-#git clone https://aur.archlinux.org/yay.git
-#cd yay/
-#makepkg -si
-#cd ..
-#rm -rf yay

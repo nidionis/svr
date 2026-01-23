@@ -4,11 +4,14 @@
 #curl -fsS https://dl.brave.com/install.sh | sh
 
 
-apt install -y  bc
-apt install -y  virt-viewer
-apt install -y  gawk
-apt install -y  exuberant-ctags
-apt install -y  cmake
+apt install -y git
+apt install -y ip
+apt install -y setxkbmap
+apt install -y bc
+apt install -y virt-viewer
+apt install -y gawk
+apt install -y exuberant-ctags
+apt install -y cmake
 apt install -y unzip
 apt install -y tcpdump
 apt install -y moreutils
@@ -28,6 +31,10 @@ apt install -y pip
 apt install -y curl
 apt install -y tree
 apt install -y ffmpeg
+apt install -y ffmpeg
+apt install -y nft
+apt install -y openvpn
+
 #apt install -y vlc
 #apt install -y terminator
 #apt install -y  gimp

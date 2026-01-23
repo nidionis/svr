@@ -12,14 +12,15 @@ fi
 MACHINE_DIR=${1:-"svr"}
 
 bash	tree_cpy.sh $MACHINE_DIR/usr
-# append sources
+source /home/.bashrc
 bash config.sh
 source /home/.bashrc
-bash python.sh
-source /home/.bashrc
+#bash python.sh
+#source /home/.bashrc
 
 bash chmod.sh
 
 bash pacman.sh
+source /home/.bashrc
 
 bash network.sh

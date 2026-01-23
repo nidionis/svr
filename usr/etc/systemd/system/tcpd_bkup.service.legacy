@@ -1,0 +1,11 @@
+[Unit]
+Description=backups tcpd log file, keeping ip adresses only
+
+[Service]
+ExecStart=/bin/bash /etc/systemd/system/tcpd_bkup.sh
+Restart=on-failure
+RestartSec=121s
+Type=oneshot
+
+[Install]
+WantedBy=multi-user.target
