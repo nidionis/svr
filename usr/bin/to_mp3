@@ -1,0 +1,12 @@
+#!/bin/bash
+to_mp3 () 
+{ 
+    for file in "$@";
+    do
+        MP3_NAME=${file%.*}.mp3;
+        echo $file;
+        echo;
+        ffmpeg -i $file -vn -b:a 192k "$MP3_NAME";
+    done
+}
+to_mp3 "$@"

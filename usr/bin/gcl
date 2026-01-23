@@ -1,0 +1,6 @@
+#!/bin/bash
+gcl () 
+{ 
+    git clone $1 $2
+}
+gcl "$@"

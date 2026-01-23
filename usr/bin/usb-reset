@@ -1,0 +1,42 @@
+#!/usr/bin/bash
+
+if [ "$#" -ne 1 ]; then
+    echo "Usage: $0 /dev/sdb"
+    exit 1
+fi
+
+#!/bin/sh
+# partitionne /dev/sdb en une partition unique FAT32 montable Win/Linux
+
+dev=$1
+
+# créer table de partition MBR et 1 partition FAT32
+fdisk "$dev" <<EOF
+o
+n
+p
+1
+ 
+ 
+t
+c
+w
+EOF
+
+echo """
+# nouvelle table DOS
+# nouvelle partition
+# primaire
+# numéro
+# début par défaut
+# fin par défaut
+# changer type
+# W95 FAT32 (LBA)
+# écrire
+"""
+
+mkfs.vfat -F32 ${dev}1 -n STORAGE
+echo "note: mkfs.vfat in dosfstools package"
+
+exit 0
+

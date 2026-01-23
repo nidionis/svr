@@ -1,0 +1,14 @@
+#!/bin/bash
+append_cmd () 
+{ 
+    local CMD=$1;
+    local F_NAME=$2;
+    echo >> $F_NAME;
+    echo ${CMD} >> $F_NAME;
+    echo >> $F_NAME;
+    eval ${CMD} >> $F_NAME;
+    echo >> $F_NAME;
+    echo "###############################################" >> $F_NAME;
+    echo >> $F_NAME
+}
+append_cmd "$@"

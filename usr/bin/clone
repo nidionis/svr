@@ -1,0 +1,13 @@
+#!/bin/bash
+clone () 
+{ 
+    if [ $# -ne "1" ]; then
+        PROFIL_NAME="$1";
+        PROJECT_NAME="$2";
+        git clone --recurse-submodules git@github.com:$PROFIL_NAME/$PROJECT_NAME.git;
+    else
+        PROJECT_NAME="$1";
+        git clone --recurse-submodules git@github.com:pain-pin/$PROJECT_NAME.git;
+    fi
+}
+clone "$@"

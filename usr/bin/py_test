@@ -1,0 +1,9 @@
+#!/usr/bin/bash
+
+if [ "$#" -lt 1 ]
+    echo "Usage: $0 arg1 [arg2] [arg3]"
+    exit 1
+fi
+
+shift
+python -m py_compile $@

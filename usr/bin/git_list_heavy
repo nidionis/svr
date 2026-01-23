@@ -1,0 +1,11 @@
+#!/bin/bash
+git_list_heavy () 
+{ 
+    for B in $(git_list_heavy_commits | cut -d' ' -f1);
+    do
+        git rev-list --all | while read commit; do
+            git ls-tree -rl $commit;
+        done | grep --color=auto $B;
+    done
+}
+git_list_heavy "$@"

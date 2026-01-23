@@ -1,0 +1,7 @@
+#!/usr/bin/bash
+
+vim + $BLACKLIST
+sudo -E bash "$NFT_RESET"
+
+exit 0
+

@@ -1,0 +1,4 @@
+#!/usr/bin/bash
+
+ss -tanp | awk '$5=="-1" || $6=="-1" {print $7}'
+

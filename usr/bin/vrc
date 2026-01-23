@@ -1,0 +1,16 @@
+#!/bin/bash
+vrc () 
+{ 
+    SOURCE="$HOME/.vimrc";
+    F_NAME=".bash_aliases";
+    FILE="$(find -O3 $HOME -name $F_NAME 2> /dev/null | head -n 1)";
+    F_PATH="$(dirname $FILE)";
+    cd "$F_PATH";
+    commit_if_modified "$F_NAME";
+	if [ "$?" == "0" ] ; then
+		cp $F_NAME $MACHINE_DIR/usr/home/.vimrc
+	fi
+    cd -;
+    source $SOURCE
+}
+vrc "$@"

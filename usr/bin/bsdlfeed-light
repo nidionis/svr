@@ -1,0 +1,50 @@
+#!/usr/bin/env python3
+
+import argparse
+from bscon import connect
+from bsdlprofile import TMP_DIR
+import os
+from atproto import Client
+0
+
+LIMIT_LOAD = 100
+
+def save_item(post, filename, directory=""):
+    filename = f"{directory}/{filename}"
+    subprocess.run(["mkdir", "-p", directory])
+    if not os.path.isfile(filename):
+        with open(filename, 'w') as f:
+            f.write(post.record.text)
+
+
+def get_feeds(client, profile, tmp_dir=TMP_DIR, save=False, cursor=None):
+    directory = f"{tmp_dir}/{profile}"
+    n = 0
+    while True:
+        res = client.app.bsky.feed.get_author_feed(
+            params={"actor": profile, "limit": LIMIT_LOAD, **({"cursor": cursor} if cursor else {})}
+        )
+        for post in res["feed"]:
+            save_item(post.post, post.post.record.created_at, directory)
+            n += 1
+        cursor = res.cursor
+        if not cursor:
+            break
+
+
+
+
+def main():
+    parser = argparse.ArgumentParser(description="Download Bluesky profile posts to JSON")
+    parser.add_argument("handle", help="Bluesky handle (ex: ni-bot.bsky.social)")
+    parser.add_argument("--folder", default=TMP_DIR)
+    args = parser.parse_args()
+
+    client = connect()
+    profile = get_feeds(client, args.handle, args.folder)
+
+
+
+if __name__ == "__main__":
+    main()
+

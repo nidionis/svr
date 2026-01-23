@@ -1,0 +1,63 @@
+#!/bin/bash
+set -eux
+
+ISO_URL="https://dl-cdn.alpinelinux.org/alpine/v3.22/releases/x86_64/alpine-virt-3.22.2-x86_64.iso"
+
+# from vm to make a shared folder
+if [ $# -lt 1 ] ; then
+	echo """
+		ISO=${1:-$(basename $ISO_URL)}
+		IMG=${2:-disc_alpine.qcow2}
+		SIZE=${3:-16G}
+		RAM=${4:-2G}
+		CPUS=${5:-2}
+		SHARE=${6:-$PWD/share}
+	"""
+	echo "cheat sheet: mount -t 9p -o trans=virtio hostshare /mnt"
+fi
+
+# --- Configurable defaults ---
+ISO=${1:-$(basename $ISO_URL)}
+IMG=${2:-disc_alpine.qcow2}
+SIZE=${3:-16G}
+RAM=${4:-2G}
+CPUS=${5:-2}
+SHARE=${6:-$PWD/share}
+
+# --- Setup ---
+mkdir -p "$SHARE"
+echo "iso = $ISO"
+[ -f "$ISO" ] || wget "$ISO_URL"
+[ -f "$IMG" ] || qemu-img create -o nocow=on -f qcow2 "$IMG" "$SIZE"
+
+# --- Optional install script ---
+# Drop any file named install.sh in ./share to execute it inside the VM later:
+# e.g. `bash /mnt/share/install.sh` after mounting
+
+
+
+qemu-system-x86_64 \
+	-m $RAM \
+	-boot once=d \
+	-cdrom $ISO \
+	-drive file=$IMG \
+	-device virtio-vga \
+	-enable-kvm \
+	-display default,show-cursor=on \
+	-nic user,hostfwd=tcp::2222-:22 \
+	-virtfs local,id=share,path="$SHARE",security_model=none,mount_tag=hostshare
+
+## --- Run QEMU with graphics + shared folder ---
+#qemu-system-x86_64 \
+#  -enable-kvm \
+#  -m "$RAM" \
+#  -cpu host \
+#  -smp "$CPUS" \
+#  -boot d \
+#  -cdrom "$ISO" \
+#  -drive file="$IMG",format=qcow2 \
+#  -device virtio-vga \
+#  -display default,show-cursor=on \
+#  -nic user,hostfwd=tcp::2222-:22 \
+#  -virtfs local,id=share,path="$SHARE",security_model=none,mount_tag=hostshare
+

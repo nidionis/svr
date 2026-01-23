@@ -1,0 +1,115 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+### === CONFIG ===
+ALPINE_VERSION="3.20.3"
+ALPINE_BASE_URL="https://dl-cdn.alpinelinux.org/alpine/v${ALPINE_VERSION%.*}/releases/aarch64"
+IMAGE="alpine-rpi-${ALPINE_VERSION}-aarch64.img.gz"
+SHA256SUMS="SHA256SUMS"
+SIGFILE="SHA256SUMS.asc"
+DEVICE=""   # will be asked interactively
+
+echo "=== Secure Alpine Installer ==="
+echo "Version: $ALPINE_VERSION"
+echo
+
+### === Step 1: Download files ===
+echo "[1/5] Downloading Alpine image and verification files…"
+curl -O "${ALPINE_BASE_URL}/${IMAGE}"
+curl -O "${ALPINE_BASE_URL}/${SHA256SUMS}"
+curl -O "${ALPINE_BASE_URL}/${SIGFILE}"
+
+### === Step 2: Verify SHA256 hash ===
+echo "[2/5] Verifying SHA256 checksum…"
+EXPECTED_HASH=$(grep "$IMAGE" "$SHA256SUMS" | awk '{print $1}')
+DOWNLOADED_HASH=$(sha256sum "$IMAGE" | awk '{print $1}')
+
+if [[ "$EXPECTED_HASH" != "$DOWNLOADED_HASH" ]]; then
+    echo "❌ ERROR: SHA256 checksum mismatch!"
+    echo "Expected:   $EXPECTED_HASH"
+    echo "Downloaded: $DOWNLOADED_HASH"
+    exit 1
+else
+    echo "✔ SHA256 checksum OK"
+fi
+
+### === Step 3: Verify signature (requires alpine-devel keyring) ===
+echo "[3/5] Verifying SHA256SUMS signature (GPG)…"
+
+if command -v gpg >/dev/null 2>&1; then
+    # Import Alpine signing keys (safe & public)
+    curl -O https://alpinelinux.org/keys/alpine-devel@lists.alpinelinux.org.asc
+    gpg --import alpine-devel@lists.alpinelinux.org.asc
+
+    if gpg --verify "$SIGFILE" "$SHA256SUMS" 2>/dev/null; then
+        echo "✔ Signature verification OK"
+    else
+        echo "❌ Signature verification failed"
+        exit 1
+    fi
+else
+    echo "⚠ GPG not installed — skipping signature verification."
+fi
+
+### === Step 4: Select device ===
+echo "[4/5] Select your SD card device:"
+lsblk
+read -rp "Enter the device path (e.g. /dev/sdX or /dev/mmcblk0): " DEVICE
+
+if [[ ! -b "$DEVICE" ]]; then
+    echo "❌ ERROR: Device not found."
+    exit 1
+fi
+
+echo "⚠️ All data on $DEVICE will be erased. Continue? (yes/no)"
+read CONFIRM
+[[ "$CONFIRM" == "yes" ]] || exit 1
+
+### === Step 5: Write image to SD card safely ===
+echo "[5/5] Installing Alpine image to $DEVICE…"
+gunzip -c "$IMAGE" | sudo dd of="$DEVICE" bs=4M status=progress conv=fsync
+
+echo "✔ Alpine successfully written to the SD card"
+echo "You can now insert the SD card into the Raspberry Pi."
+
+### === Security suggestions after first boot ===
+cat <<EOF
+
+🔐 === POST-INSTALL SECURITY RECOMMENDATIONS ===
+
+After first boot on the Raspberry Pi:
+
+1. Change root password:
+   passwd
+
+2. Enable community repository:
+   echo 'https://dl-cdn.alpinelinux.org/alpine/v${ALPINE_VERSION%.*}/community' >> /etc/apk/repositories
+
+3. Update system:
+   apk update && apk upgrade
+
+4. Install security tools:
+   apk add openssh-server ufw doas
+
+5. Harden SSH:
+   edit /etc/ssh/sshd_config
+   - PermitRootLogin no
+   - PasswordAuthentication no
+   - UseKeychain yes
+
+6. Create a non-root user:
+   adduser secureuser
+   echo "permit persist secureuser as root" > /etc/doas.d/doas.conf
+
+7. Enable firewall:
+   ufw default deny incoming
+   ufw allow ssh
+   ufw enable
+
+8. Enable automatic security updates:
+   apk add alpine-conf
+   setup-automatic-updates
+
+Your Alpine installation is now secure and minimal.
+EOF
+

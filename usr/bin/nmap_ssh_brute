@@ -1,0 +1,6 @@
+#!/bin/bash
+nmap_ssh_brute () 
+{ 
+    nmap --script "ssh-brute" $1
+}
+nmap_ssh_brute "$@"

@@ -1,0 +1,19 @@
+#!/usr/bin/bash
+
+echo """
+bluetoothctl
+power on
+agent on
+default-agent
+scan on
+
+pair 22:22:D6:8F:28:2B
+trust 22:22:D6:8F:28:2B
+connect 22:22:D6:8F:28:2B
+
+blueman-sendto 22:22:D6:8F:28:2B yourfile.jpg
+
+bluetoothctl
+remove 22:22:D6:8F:28:2B
+
+"""

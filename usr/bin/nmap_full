@@ -1,0 +1,6 @@
+#!/bin/bash
+nmap_full () 
+{ 
+    sudo nmap --scanflags URGACKPSHRSTSYNFIN $@
+}
+nmap_full "$@"

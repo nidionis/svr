@@ -1,0 +1,4 @@
+#!/bin/bash
+
+export DATE=$(date +"%y%m%d");
+export TIME=$(date +"%T")

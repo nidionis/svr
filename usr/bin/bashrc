@@ -1,0 +1,6 @@
+#!/bin/bash
+bashrc () 
+{ 
+    vim ~/.bashrc
+}
+bashrc "$@"

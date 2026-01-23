@@ -1,0 +1,30 @@
+#!/usr/bin/bash
+
+if [ "$#" -ne 1 ] ; then
+    echo "Usage: $0 .iso"
+    exit 1
+fi
+
+ISO="$1"
+WORKDIR=iso_edit
+NEWISO=custom.iso
+
+mkdir -p "$WORKDIR"
+mount -o loop "$ISO" "$WORKDIR"
+
+echo "[*] Enter chroot (bind mounts first)"
+mount --bind /dev "$WORKDIR/dev"
+mount --bind /sys "$WORKDIR/sys"
+mount --bind /proc "$WORKDIR/proc"
+chroot "$WORKDIR" /bin/bash
+
+echo """
+run:
+post-chroot-iso
+"""
+# sudo umount "$WORKDIR"/{proc,sys,dev}
+# genisoimage -o "$NEWISO" -V "CUSTOM" -R -J "$WORKDIR"
+# note : from cdrkit package
+
+exit 0
+

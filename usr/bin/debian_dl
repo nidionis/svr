@@ -1,0 +1,49 @@
+#!/bin/bash
+set -euo pipefail
+
+ARCH=amd64
+BASE_URL=https://cdimage.debian.org/debian-cd/current/$ARCH/iso-cd
+
+# Détection du dernier netinst ISO
+ISO=$(wget -qO- "$BASE_URL/" | grep -oP "debian-[0-9.]+-${ARCH}-netinst\.iso" | sort -V | tail -n1)
+SUMS=SHA256SUMS
+SIG=SHA256SUMS.sign
+
+echo "Latest ISO found: $ISO"
+
+# Téléchargement ISO seulement si absent
+if [ ! -f "$ISO" ]; then
+  wget -N "$BASE_URL/$ISO"
+else
+  echo "$ISO already exists, skipping download."
+fi
+
+# Téléchargement des fichiers de contrôle
+wget -N "$BASE_URL/$SUMS"
+wget -N "$BASE_URL/$SIG"
+
+# Import des clés Debian Archive (utile pour cohérence générale)
+KEYRING_PKG=debian-archive-keyring_2025.1_all.deb
+if [ ! -f "$KEYRING_PKG" ]; then
+  wget "https://ftp.debian.org/debian/pool/main/d/debian-archive-keyring/$KEYRING_PKG"
+fi
+TMPDIR=$(mktemp -d)
+ar x "$KEYRING_PKG" --output="$TMPDIR"
+tar -xf "$TMPDIR"/data.tar.* -C "$TMPDIR"
+gpg --import "$TMPDIR/usr/share/keyrings/debian-archive-keyring.gpg" || true
+rm -rf "$TMPDIR"
+
+# Import des clés Debian CD signing (officielles sur debian.org/CD/verify)
+gpg --keyserver hkps://keyring.debian.org --recv-keys \
+  DF9B9C49EAA9298432589D76DA87E80D6294BE9B \
+  64E6EA7D \
+  E0B11894F66AEC98 || true
+
+# Vérification signature
+echo "Verifying signature..."
+gpg --verify "$SIG" "$SUMS"
+
+# Vérification ciblée uniquement sur l’ISO téléchargé
+echo "Verifying checksum for $ISO..."
+grep "$ISO" "$SUMS" | sha256sum -c -
+

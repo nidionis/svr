@@ -1,0 +1,13 @@
+#!/bin/bash
+history_full () 
+{ 
+    HIST_FILE=~/.history;
+    while read LINE; do
+        if [ -n "$(echo "$LINE" | grep '^#')" ]; then
+            date -d "$(echo $LINE | sed 's/\#/@/g')";
+        else
+            echo "$LINE";
+        fi;
+    done < $HIST_FILE
+}
+history_full "$@"

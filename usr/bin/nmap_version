@@ -1,0 +1,7 @@
+#!/bin/bash
+nmap_version () 
+{ 
+    echo "run : nmap -sV --version-intensity 9 -O -sC $@"
+    nmap -sV --version-intensity 9 -O -sC $@
+}
+nmap_version "$@"

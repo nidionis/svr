@@ -1,0 +1,11 @@
+#!/usr/bin/bash
+
+if [ "$#" -ne 1 ] ; then
+    echo "Usage: $0 arg1"
+    exit 1
+fi
+
+cat $(which $1)
+
+exit 0
+

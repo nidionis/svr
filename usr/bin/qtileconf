@@ -1,0 +1,4 @@
+#!/usr/bin/bash
+vim ~/.config/qtile/config.py
+exit 0
+

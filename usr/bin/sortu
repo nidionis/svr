@@ -1,0 +1,6 @@
+#!/bin/bash
+sortu () 
+{ 
+    sort | uniq -c | sort -n
+}
+sortu "$@"

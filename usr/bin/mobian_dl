@@ -1,0 +1,71 @@
+#!/bin/bash
+# mobian_vm_signed.sh
+# Télécharge dernière image Mobian signée, lance VM, sauvegarde incrémentale
+
+set -euo pipefail
+
+BASE_URL="${1:-https://images.mobian.org/amd64/weekly/}"
+WORKDIR="${2:-/var/lib/mobian_vm}"
+BACKUPDIR="${3:-/var/backups/mobian}"
+
+mkdir -p "$WORKDIR" "$BACKUPDIR"
+cd "$WORKDIR"
+
+echo "[1] Recherche dernière image signée"
+INDEX=$(wget -qO- "$BASE_URL")
+# cherche uniquement les images avec .img.xz et .sha256 existants
+IMG_NAME=$(echo "$INDEX" | grep -oP 'mobian-amd64-\d{6,8}\.img\.xz' | sort | tail -n1)
+
+if [ -z "$IMG_NAME" ]; then
+  echo "Aucune image signée trouvée dans $BASE_URL"
+  exit 1
+fi
+
+echo "→ Image trouvée: $IMG_NAME"
+
+# Téléchargement
+echo "[2] Téléchargement image + signatures"
+wget -N "$BASE_URL$IMG_NAME" \
+        "$BASE_URL$IMG_NAME.sha256" \
+        "$BASE_URL$IMG_NAME.asc"
+
+# Vérification SHA256
+echo "[3] Vérification SHA256"
+sha256sum -c "$IMG_NAME.sha256"
+
+# Vérification GPG
+echo "[4] Vérification GPG"
+gpg --keyserver keyserver.ubuntu.com --recv-keys 0x1CE2AFD36DBA9F48
+gpg --verify "$IMG_NAME.asc" "$IMG_NAME"
+
+RAW_IMG="${IMG_NAME%.xz}"
+
+# Extraction si nécessaire
+if [ ! -f "$RAW_IMG" ]; then
+  xz -dk "$IMG_NAME"
+fi
+
+## Arrêt éventuelle ancienne VM
+#pkill -f "qemu-system-x86_64.*$RAW_IMG" || true
+#
+## Lancement VM
+#echo "[5] Lancement VM"
+#nohup qemu-system-x86_64 \
+#  -m 2048 -smp 2 \
+#  -drive file="$RAW_IMG",format=raw \
+#  -nic user,hostfwd=tcp::2222-:22 \
+#  -nographic >"$WORKDIR/qemu.log" 2>&1 &
+#
+## Sauvegarde incrémentale
+#echo "[6] Sauvegarde incrémentale"
+#TODAY=$(date +%F)
+#rsync -a --link-dest="$BACKUPDIR/latest" \
+#  "$RAW_IMG" \
+#  "$BACKUPDIR/$TODAY/"
+#ln -sfn "$BACKUPDIR/$TODAY" "$BACKUPDIR/latest"
+#
+#echo "[OK] VM active sur port 2222 (SSH/X11)."
+#echo "Depuis smartphone :"
+#echo "  ssh -p 2222 -C -X user@serveur"
+#echo "Puis lancer startlxqt ou autre session graphique."
+

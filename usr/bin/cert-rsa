@@ -1,0 +1,15 @@
+#!/usr/bin/bash
+
+NAME="${1:-db}"
+SUBJ="${2:-myDB}"
+TIME="${3:-356000}"
+KEY="${4:-$NAME.key}"
+CERT="${5:-$NAME.crt}"
+
+echo run: 
+echo "openssl req -new -x509 -newkey rsa:4096 -sha256 -days $TIME -nodes \
+  -subj /CN=$SUBJ/ -keyout $KEY -out $CERT"
+openssl req -new -x509 -newkey rsa:4096 -sha256 -days $TIME -nodes \
+  -subj "/CN=$SUBJ/" -keyout $KEY -out $CERT
+
+echo $0 name subj days

@@ -1,0 +1,6 @@
+#!/bin/bash
+monip () 
+{ 
+    curl ifconfig.me
+}
+monip "$@"

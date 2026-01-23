@@ -1,0 +1,10 @@
+#!/bin/bash
+gitmain () 
+{ 
+    if [ -z "$1" ]; then
+        git checkout main;
+        git reset --hard "$1";
+        git push origin main --force;
+    fi
+}
+gitmain "$@"

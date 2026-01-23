@@ -1,0 +1,14 @@
+#!/usr/bin/bash
+
+ARCHIVE_DIR=${2:"/tmp/clean-dict.del"}
+mkdir -p $ARCHIVE_DIR
+
+if [ "$#" -lt 1 ] ; then
+	find . -type f -size -"${SIZE_MIN}c" -exec mv {} $ARCHIVE_DIR \;
+    exit 1
+elif
+	find . -type f -size -"${SIZE_MIN}c" -delete
+fi
+
+exit 0
+

@@ -1,0 +1,13 @@
+#!/bin/bash
+to_wav () 
+{ 
+    OUTDIR_NAME="wav_files";
+    for file in "$@";
+    do
+        WAV_NAME=${file%.*}.wav;
+        echo $file;
+        echo;
+        ffmpeg -i $file -ar 16000 -ac 1 "$WAV_NAME";
+    done
+}
+to_wav "$@"

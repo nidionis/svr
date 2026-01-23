@@ -1,0 +1,8 @@
+#!/usr/bin/bash
+
+echo "nmcli con del $(nmcli con show | grep gsm | head -1|awk '{print $2}')"
+FIRST_GSM=$(nmcli con show | grep gsm | head -1|awk '{print $2}')
+nmcli con del $FIRST_GSM
+
+exit 0
+

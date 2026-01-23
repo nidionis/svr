@@ -1,0 +1,11 @@
+#!/usr/bin/bash
+
+if [ "$#" -lt 1 ] ; then
+    echo "Usage: $0 ip [polite2]"
+    exit 1
+fi
+
+nmap --script -T3 http-enum $1
+
+exit 0
+

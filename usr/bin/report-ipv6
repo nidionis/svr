@@ -1,0 +1,37 @@
+#!/usr/bin/bash
+
+if [ "$#" -lt 1 ] || [ "$#" -gt 3 ]; then
+    echo "Usage: $0 arg1 [arg2] [arg3]"
+    exit 1
+fi
+#!/bin/bash
+
+IP="$1"
+DIR="${2:-${IP}_report}"
+
+mkdir -p "$DIR"
+cd $DIR
+
+#report-cmd "dig AAAA $IP"
+#
+#report-cmd "dig -x $IP"
+#report-cmd "host $IP"
+
+report-cmd "curl -s https://ipinfo.io/$IP" ipinfo
+report-cmd "curl -s https://ipapi.co/$IP/json/" ipapi
+
+#report-cmd "sipcalc $IP"
+#report-cmd "ipv6calc --in ipv6addr $IP"
+#
+#report-cmd "traceroute6 $IP"
+#report-cmd "tracepath6 $IP"
+
+#report-cmd "curl -s https://api.bgpview.io/ip/$IP"
+#report-cmd "curl -s 'https://stat.ripe.net/data/prefix-overview/data.json?resource=$IP'"
+#
+#report-cmd "nmap -6 $IP"
+
+cd -
+
+exit 0
+

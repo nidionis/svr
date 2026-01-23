@@ -1,0 +1,18 @@
+#!/usr/bin/bash
+
+#if [ "$#" -lt 1 ] || [ "$#" -gt 3 ]; then
+#    echo "Usage: mount the last sdx in dmesg"
+#    exit 1
+#fi
+
+SDX=${1:-$(dmesg | tail -1 | grep -Eo "sd[^ ]")}
+SDX1=${SDX}1
+MNT_PT=/mnt/$SDX1
+
+mkdir -p $MNT_PT
+
+mount /dev/${SDX1} $MNT_PT
+cd $MNT_PT
+
+exit 0
+

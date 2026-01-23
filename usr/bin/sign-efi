@@ -1,0 +1,25 @@
+#!/usr/bin/bash
+
+EFI=${1:-"shim.efi"}
+NAME=${2:-"MOK"}
+SIGNED_EFI=${3:-"$(echo $EFI | sed 's/.efi/-signed.efi/')"}
+DB_KEY=${4:-"${NAME}.key"}
+DB_CERT=${5:-"${NAME}.crt"}
+
+if [ "$#" -eq 0 ] ; then 
+	echo '''
+
+	EFI=${1:-"shim.efi"}
+	NAME=${2:-"MOK"}
+	SIGNED_EFI=${3:-"$(echo $EFI | sed 's/.efi/-signed.efi/')"}
+	DB_KEY=${4:-"${NAME}.key"}
+	DB_CERT=${5:-"${NAME}.crt)"}
+
+	'''
+	echo "sbsign --key $DB_KEY --cert $DB_CERT --output $SIGNED_EFI $EFI"
+    echo "Usage: $0 efi"
+    exit 1
+fi
+
+sbsign --key $DB_KEY --cert $DB_CERT --output $SIGNED_EFI $EFI
+

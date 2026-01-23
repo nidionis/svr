@@ -1,0 +1,28 @@
+#!/usr/bin/bash
+
+
+if [ "$#" -lt 1 ] || [ "$#" -gt 1 ]; then
+    echo "Usage: $0 alias"
+    exit 1
+fi
+
+
+F=$(which "$1")
+
+if [ ! -f "$F" ]; then
+	F="$SBIN_DIR/$1"
+	cp $MACHINE_DIR/usr/home/.vim/templates/template.sh $F
+fi
+vim "$F"
+chmod +x $F
+
+cd $SBIN_DIR
+git pull
+gitaddcommit
+git push
+cd -
+
+
+
+exit 0
+

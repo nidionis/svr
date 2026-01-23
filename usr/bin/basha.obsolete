@@ -1,0 +1,12 @@
+#!/bin/bash
+basha () 
+{ 
+    SOURCE="$HOME/.bashrc";
+    F_NAME=".bash_aliases";
+    FILE=$HOME/$F_NAME;
+    cd "$HOME/machine";
+    commit_if_modified "$FILE";
+    cd -;
+    source $SOURCE
+}
+basha "$@"

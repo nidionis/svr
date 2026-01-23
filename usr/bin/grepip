@@ -1,0 +1,6 @@
+#!/bin/bash
+grepip () 
+{ 
+    grep --color=auto -Eo $IP_REG $@ | sortu
+}
+grepip "$@"

@@ -1,0 +1,16 @@
+#!/bin/bash
+header_journal () 
+{ 
+    F_NAME=$1;
+	. refresh_time
+    echo "$DATE" >> $F_NAME;
+    echo "$TIME" >> $F_NAME;
+    echo "$USER" >> $F_NAME;
+    echo "$HOST" >> $F_NAME;
+    echo >> $F_NAME;
+    echo "###############################################" >> $F_NAME;
+    echo >> $F_NAME;
+    echo "$F_NAME" >> $F_NAME;
+    echo >> $F_NAME
+}
+header_journal "$@"

@@ -1,0 +1,14 @@
+services:
+  al-pine:
+    build: .
+    container_name: alp
+    environment:
+      - DISPLAY=${DISPLAY}  # for GUI
+    volumes:
+      - ./shared-root:/shared-root
+      - ./extra-folder:/extra-folder
+      - /tmp/.X11-unix:/tmp/.X11-unix  # X11 socket
+    network_mode: "host"  # optional: allows GUI display directly
+    tty: true
+    stdin_open: true
+

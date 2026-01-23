@@ -1,0 +1,8 @@
+#!/usr/bin/bash
+
+echo read open port and lsof try to return the associated process
+
+ss -tunl | awk '{if (NR != 1) print $5}' | awk -F: '{print $NF}' | sort | uniq | xargs -I PORT bash -c "echo port: PORT && lsof -i :PORT | awk '{if (NR != 1) print $NR}'"
+
+exit 0
+

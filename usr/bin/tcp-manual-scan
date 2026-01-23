@@ -1,0 +1,46 @@
+#!/usr/bin/env python3
+import socket
+import argparse
+
+def scan(host, port, banner, timeout):
+    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    s.settimeout(timeout)
+    try:
+        err = s.connect_ex((host, port))
+        if err == 111:
+            return "closed", b""
+        if err != 0:
+            return "filtered", b""
+        try:
+            s.sendall(banner)
+        except:
+            print("Error sending")
+        try:
+            data = s.recv(1024)
+        except:
+            data = b"error receiving"
+        return "open", data
+    finally:
+        s.close()
+
+def main():
+    p = argparse.ArgumentParser()
+    p.add_argument("host")
+    p.add_argument("-P", "--ports", default="22,80,443")
+    p.add_argument("-b", "--banner", default="GET / ")
+    p.add_argument("-t", "--timeout", type=float, default=1.0)
+    a = p.parse_args()
+
+    ports = [int(x) for x in a.ports.split(",") if x.strip()]
+    banner = a.banner.encode()
+
+    for port in ports:
+        state, data = scan(a.host, port, banner, a.timeout)
+        if state == "open":
+            print(f"{port} open       {data.decode('utf-8', 'replace').strip()}")
+        else:
+            print(f"{port} {state}")
+
+if __name__ == "__main__":
+    main()
+

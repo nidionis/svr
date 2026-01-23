@@ -1,0 +1,20 @@
+#!/bin/bash
+journalctl_prettyfy () 
+{ 
+    SIZE=${1:-"100"};
+    UNIQ_MIN=${2:-"1"};
+    BOOT=${3:-"0"};
+    local TMP="/tmp/journalctl_prettyf.tmp";
+    _FILE=${4:-"$TMP"};
+    CMD="sudo journalctl -b ${BOOT} | tail -n $SIZE";
+    CMD_SORTED="${CMD} | cut -d\: -f 4- | sort | uniq -c | sort -n";
+    rm -f "$TMP";
+    append_cmd "$CMD" "$TMP";
+    append_cmd "$CMD_SORTED" "$TMP";
+    grep --color=auto -vE " +[0-${UNIQ_MIN}] " $TMP >> "$_FILE";
+    if ! $#; then
+        cat $_FILE;
+    fi;
+    rm "$TMP"
+}
+journalctl_prettyfy "$@"

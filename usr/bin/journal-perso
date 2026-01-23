@@ -1,0 +1,42 @@
+#!/bin/bash
+journal-perso () 
+{ 
+    . . refresh_time;
+    DIR_ORIGINAL=$PWD;
+    DIR=$PERSO_DIR;
+    DATE_DIR="$YEAR/$MONTH/$DAY";
+    if [ "$#" -eq 0 ]; then
+        echo "Usage: $0 [ subfolder ] < file >";
+        echo "default path is $DIR";
+        echo "default file name is $F_NAME";
+        return 1;
+    fi;
+    if [ "$#" -eq 1 ]; then
+        LN_DIR="fouretout";
+        F_NAME=$1;
+    fi;
+    if [ "$#" -eq 2 ]; then
+        LN_DIR="$1";
+        F_NAME=$2;
+    else
+        return 1;
+    fi;
+    F_NAME+=".md";
+    cd $DIR;
+    PATH_="${DATE_DIR}/${LN_DIR}";
+    mkdir -p "$PATH_";
+    FILE="${PATH_}/${F_NAME}";
+    header_journal $FILE;
+    if commit_if_modified $FILE; then
+        mkdir -p "$DIR/$LN_DIR";
+        ln -P "$FILE" "$DIR/$LN_DIR/";
+		git add "$DIR/$LN_DIR/$FILE";
+		git commit -m "-> $FILE linked";
+    else
+        rm $FILE;
+        rmdir -p "${PATH_}";
+    fi;
+    cd $DIR_ORIGINAL
+}
+
+journal-perso "$@"

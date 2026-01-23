@@ -1,0 +1,41 @@
+#!/usr/bin/bash
+
+DIR=${1:-"$LOG_CONN_DIR"}
+SUB_DIR=${2:-$(date "+%y%m%d")}
+DIR="$DIR/$SUB_DIR"
+NAME=${2:-"dflt"}
+NAME=$(echo $(date +"%y%m%d")-$(date +"%T").$NAME | sed "s/:/_/g")
+FILE=$DIR/$NAME
+
+echo "File at $FILE"
+if [ "$#" -lt 1 ] ; then
+	echo "usage $0 filename"
+	echo "File at $FILE"
+	exit 1 
+fi
+
+mkdir -p $DIR
+
+echo "File at $FILE"
+
+#DEVICE=$(ip addr | grep -v DOWN | grep -E "^[0-9]" | awk -F':' '{print $2}' | grep -v lo)
+#NB_DEVICES="$(echo ${DEVICE} | awk '{print NF}')"
+#
+#if [ $NB_DEVICES -lt "1" ] ; then
+#	echo no device
+#	echo $DEVICE
+#	exit 1
+#elif [ $NB_DEVICES -gt "1" ] ; then
+#	echo several devices, precise it using '$2':
+#	echo $DEVICE
+#	exit 1
+#fi
+
+echo 'DEVICE='$DEVICE
+echo 
+
+tcpdump -U -n | tee -a $FILE.log
+tcpdump -U -w $FILE.pcap
+
+exit 1
+

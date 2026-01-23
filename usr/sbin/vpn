@@ -1,0 +1,6 @@
+#!/usr/bin/bash
+
+cat $MACHINE_DIR/usr/etc/openvpn/.pot.swp
+#openvpn /etc/openvpn/client/ch-free-2.protonvpn.tcp.ovpn
+#openvpn /etc/openvpn/client/ch-free-4.protonvpn.tcp.ovpn
+openvpn /etc/openvpn/client/ch-free-6.protonvpn.tcp.ovpn

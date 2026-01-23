@@ -1,0 +1,9 @@
+#!/usr/bin/bash
+
+UUID_BOOT=$(sudo blkid | grep -E nbd[0-9a-z]+1 | grepkey PARTUUID | sed "s/\"//g")
+UUID_ROOT=$(sudo blkid | grep -E nbd[0-9a-z]+2 | grepkey PARTUUID | sed "s/\"//g")
+
+echo "/dev/disk/by-uuid/$UUID_BOOT                            /boot vfat defaults 0 0" >> rootfs/etc/fstab
+echo "/dev/disk/by-uuid/$UUID_ROOT /     ext4 defaults 0 0" >> rootfs/etc/fstab
+exit 0
+

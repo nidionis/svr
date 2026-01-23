@@ -1,0 +1,39 @@
+#!/bin/bash
+set -eux
+
+# from vm to make a shared folder
+echo "cheat sheet: mount -t 9p -o trans=virtio hostshare /mnt"
+
+# --- Configurable defaults ---
+ISO_URL="https://mirror.arizona.edu/archlinux/iso/latest/archlinux-x86_64.iso"
+ISO=${1:-$(basename $ISO_URL)}
+IMG=${2:-disk_qemu.qcow2}
+SIZE=${3:-16G}
+RAM=${4:-2G}
+CPUS=${5:-2}
+SHARE=${6:-$PWD/share}
+
+# --- Setup ---
+mkdir -p "$SHARE"
+echo "iso = $ISO"
+[ -f "$ISO" ] || wget "$ISO_URL"
+[ -f "$IMG" ] || qemu-img create -o nocow=on -f qcow2 "$IMG" "$SIZE"
+
+# --- Optional install script ---
+# Drop any file named install.sh in ./share to execute it inside the VM later:
+# e.g. `bash /mnt/share/install.sh` after mounting
+
+# --- Run QEMU with graphics + shared folder ---
+qemu-system-x86_64 \
+  -enable-kvm \
+  -m "$RAM" \
+  -cpu host \
+  -smp "$CPUS" \
+  -boot d \
+  -cdrom "$ISO" \
+  -drive file="$IMG",format=qcow2 \
+  -device virtio-vga \
+  -display default,show-cursor=on \
+  -nic user,hostfwd=tcp::2222-:22 \
+  -virtfs local,id=share,path="$SHARE",security_model=none,mount_tag=hostshare
+

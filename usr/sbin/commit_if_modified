@@ -1,0 +1,20 @@
+#!/bin/bash
+commit_if_modified () 
+{ 
+    local F_NAME=$1;
+    local DEL=$2;
+    #git pull;
+    vim + $F_NAME;
+    git add $F_NAME;
+	git commit
+    if [ $? -eq 0 ] ; then
+        echo -n "[no modifications]";
+        if [ -n "$DEL" ]; then
+            rm $F_NAME;
+            echo -n " -> deleted";
+            return 1;
+        fi;
+	fi;
+    return 0
+}
+commit_if_modified "$@"

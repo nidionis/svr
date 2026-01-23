@@ -1,0 +1,44 @@
+#!/bin/bash
+journal () 
+{ 
+    . refresh_time;
+    DIR_ORIGINAL=$PWD;
+    DIR="$HOME/journal/";
+    DATE_DIR="$YEAR/$MONTH/$DAY";
+    if [ "$#" -eq 0 ]; then
+        echo "Usage: $0 [ subfolder ] < file >";
+        echo "default path is $DIR";
+        echo "default file name is $F_NAME";
+        return 1;
+    fi;
+    if [ "$#" -eq 1 ]; then
+        LN_DIR="fouretout";
+        F_NAME=$1;
+    fi;
+    if [ "$#" -eq 2 ]; then
+        LN_DIR="$1";
+        F_NAME=$2;
+    else
+		echo check args
+        return 1;
+    fi;
+	mkdir -p $DIR/$HOST
+    F_NAME+=".md";
+    cd $DIR;
+    PATH_="${DATE_DIR}/${LN_DIR}";
+    mkdir -p "$PATH_";
+    FILE="${PATH_}/${F_NAME}";
+    header_journal $FILE;
+	echo "header done"
+    if commit_if_modified $FILE; then
+        mkdir -p "$DIR/$HOST/$LN_DIR";
+        ln -P "$FILE" "$DIR/$HOST/$LN_DIR";
+		git add . ;
+		git commit -m "	-> linked";
+    else
+        rm $FILE;
+        rmdir -p "${PATH_}";
+    fi;
+    cd $DIR_ORIGINAL
+}
+journal "$@"

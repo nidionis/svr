@@ -1,0 +1,6 @@
+#!/usr/bin/bash
+
+vim $NET_STATUS
+
+exit 0
+

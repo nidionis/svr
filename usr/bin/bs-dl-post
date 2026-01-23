@@ -1,0 +1,17 @@
+#!/usr/bin/bash
+
+if [ "$#" -lt 1 ] || [ "$#" -gt 2 ]; then
+    echo "Usage: $0 url [file out] [*]"
+    exit 1
+fi
+
+URL=$1
+shift
+OUT=${1:-"posts.json"}
+echo "ÖUT = $OUT"
+shift
+
+bsdlpost.py $(bsurifromurl.py $URL 2>/dev/null) -o $OUT $@  2>/dev/null
+
+exit 0
+

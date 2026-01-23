@@ -1,0 +1,26 @@
+#!/bin/bash
+report_last_boot () 
+{ 
+    . refresh_time;
+    NAME=$1;
+    DIR_ORIGINAL=$PWD;
+    CRASH_DIR="$(echo ${DATE}_${TIME} | sed 's/:/-/g')";
+    F_NAME="${NAME}.crash";
+    DIR_RELATIVE="$HOME/journal/sysadmin/crash/reboot";
+    DIR_RELATIVE+="/${CRASH_DIR}";
+    if [ "$#" -ne 1 ]; then
+        echo "Usage: $0 FILE_NAME";
+        echo "default path is $DIR_RELATIVE/${CRASH_DIR}/FILE_NAME.crash";
+        echo "write log outputs";
+        return 1;
+    fi;
+    mkdir -p $DIR_RELATIVE;
+    cd $DIR_RELATIVE;
+    header_journal $F_NAME;
+	# journalctl_prettyfy N_TAIL MIN_OCC BOOT_NB F_NAME;
+    journalctl_prettyfy 500 5 1 $F_NAME;
+    journalctl_prettyfy 10000 5 0 $F_NAME;
+    commit_if_modified "$F_NAME" "DELETE_IF_NOT_MODIFIED";
+    cd $DIR_ORIGINAL
+}
+report_last_boot "$@"

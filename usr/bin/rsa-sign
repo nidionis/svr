@@ -1,0 +1,7 @@
+#!/usr/bin/bash
+
+KEY="$1"
+MSG="$2"
+OUT="$3"
+
+echo "$MSG" | openssl dgst -sha256 -sign "$PRIVKEY" --out "$OUT"

@@ -1,0 +1,23 @@
+#!/usr/bin/bash
+
+if [ "$#" -lt 1 ] || [ "$#" -gt 3 ]; then
+    echo "Usage: $0 arg1 [arg2] [arg3]"
+    exit 1
+fi
+FILE=${1}
+DIR=${2:-"$HOME/network/whois"}
+
+mkdir -p "${DIR}"
+
+while IFS= read -r line; do
+	IP_ADDR=$(echo $line | grep -Eo $IPV4_REG)
+	F_OUT=$DIR/$IP_ADDR
+	echo request $IP_ADDR
+	if [ -n "$IP_ADDR" ] ; then
+		whois $IP_ADDR | tee $F_OUT
+		echo done
+	fi
+done < "$FILE"
+
+exit 0
+

@@ -1,0 +1,6 @@
+#!/bin/bash
+bashalias () 
+{ 
+    vim /home/.bash_aliases
+}
+bashalias "$@"

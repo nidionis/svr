@@ -1,0 +1,6 @@
+#!/usr/bin/bash
+
+USER=${1:-"presko"}
+groupadd $MACHINE
+useradd -k $HOMESKEL_DIR -m -G sudo,$MACHINE $1
+usermod -aG $MACHINE $USER

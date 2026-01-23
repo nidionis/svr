@@ -1,0 +1,10 @@
+#!/bin/bash
+gitotal () 
+{ 
+    gitaddcommit $@;
+    git pull;
+    if [ -n "$?" ]; then
+        git push origin HEAD;
+    fi
+}
+gitotal "$@"

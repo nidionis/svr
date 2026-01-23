@@ -1,0 +1,25 @@
+set editing-mode vi
+"\e[A": history-search-backward
+"\e[B": history-search-forward
+
+
+# For vi command mode
+set keymap vi-command
+"\e[A": history-search-backward
+"\e[B": history-search-forward
+"\eOA": history-search-backward
+"\eOB": history-search-forward
+
+# For vi insert mode
+set keymap vi-insert
+"\e[A": history-search-backward
+"\e[B": history-search-forward
+"\eOA": history-search-backward
+"\eOB": history-search-forward
+
+# Other settings
+set completion-ignore-case on
+set show-all-if-ambiguous on
+set bell-style none
+set match-hidden-files off
+

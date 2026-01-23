@@ -1,0 +1,6 @@
+#!/bin/bash
+git_list_heavy_commits () 
+{ 
+    git verify-pack -v .git/objects/pack/*.idx | sort -k 3 -n -r | head -n 20
+}
+git_list_heavy_commits "$@"

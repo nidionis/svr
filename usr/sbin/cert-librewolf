@@ -1,0 +1,19 @@
+#!/usr/bin/bash
+
+mkdir certs
+cd certs
+
+openssl genrsa -out ca.key 4096
+
+openssl req -x509 -new -sha256 -days 356000 -nodes   -subj "/CN=LibreWolf CA/" -key ca.key -out ca.crt
+
+openssl genrsa -out librewolf.key 2048
+
+openssl req -new -key librewolf.key -out librewolf.csr -subj '/CN=librewolf.local'
+
+echo "subjectAltName = DNS:librewolf.local,IP:127.0.0.1" > librewolf.ext
+
+openssl x509 -req -in librewolf.csr -CA ca.crt -CAkey ca.key -CAcreateserial -out librewolf.crt -days 365 -sha256 -extfile librewolf.ext
+
+cd -
+cp -r certs /srv/appdata/librewolf/config/

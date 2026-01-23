@@ -1,0 +1,6 @@
+#!/bin/bash
+normi () 
+{ 
+    norminette -R CheckForbiddenSourceHeader -R CheckDefine $1
+}
+normi "$@"

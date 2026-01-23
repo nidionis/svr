@@ -1,0 +1,36 @@
+#!/usr/bin/bash
+
+if [ "$#" -lt 1 ] || [ "$#" -gt 3 ]; then
+    echo "Usage: $0 arg1 [arg2] [arg3]"
+    exit 1
+fi
+
+uuidgen --random > guid.txt 
+
+openssl req -new -x509 -newkey rsa:2048 -subj "/CN=My Platform Key/" -keyout pk.key -out pk.crt -days 3650 -nodes -sha256
+openssl req -new -x509 -newkey rsa:2048 -subj "/CN=My Key Exchange Key/" -keyout kek.key -out kek.crt -days 3650 -nodes -sha256
+openssl req -new -x509 -newkey rsa:2048 -subj "/CN=My Signature DB Key/" -keyout db.key -out db.crt -days 3650 -nodes -sha256
+
+uuidgen --random > guid.txt
+sign-efi-sig-list -k pk.key -c pk.crt PK pk.esl pk.auth
+
+cert-to-efi-sig-list -g "$(< guid.txt)" kek.crt kek.esl
+cert-to-efi-sig-list -g "$(< guid.txt)" db.crt db.esl
+
+with created private key:
+
+sign-efi-sig-list -k pk.key -c pk.crt PK pk.esl pk.auth
+
+cert-to-efi-sig-list -g "$(< guid.txt)" kek.crt kek.esl
+cert-to-efi-sig-list -g "$(< guid.txt)" db.crt db.esl
+
+cat old_KEK.esl kek.esl > combined_KEK.esl
+cat old_db.esl db.esl > combined_db.esl
+
+efi-updatevar -e -f old_dbx.esl dbx
+efi-updatevar -e -f combined_db.esl db
+efi-updatevar -e -f combined_KEK.esl KEK
+efi-updatevar -f pk.auth PK
+
+exit 0
+

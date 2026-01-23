@@ -1,0 +1,37 @@
+#!/bin/bash
+
+REPO_PATH="$1"
+HOST_ALIAS=${2:-""}      # optional, defaults to domain in remote URL
+PROFILE_ALIAS=${3:-"$USER"}
+PASSPHRASE=${4:-""}
+
+[ -z "$REPO_PATH" ] && { echo "Usage: $0 /path/to/repo"; exit 1; }
+
+cd "$REPO_PATH" || exit 1
+
+KEY_PATH="$HOME/.ssh/$(basename "$REPO_PATH")_id_ed25519"
+ssh-keygen -t ed25519 -f "$KEY_PATH" -C "$(basename "$REPO_PATH")" -N "$PASSPHRASE"
+
+eval "$(ssh-agent -s)"
+ssh-add "$KEY_PATH"
+
+REMOTE_URL=$(git remote get-url origin)
+
+# Extract domain from remote URL
+if [[ "$REMOTE_URL" =~ ([^/:]+(:[0-9]+)?)[/:].* ]]; then
+    DOMAIN="${BASH_REMATCH[1]}"
+else
+    echo "Could not parse remote domain. Please update manually."
+    exit 1
+fi
+
+# Use provided host alias if given
+HOST_TO_USE=${HOST_ALIAS:-$DOMAIN}
+
+REPO_NAME=$(basename "$REPO_PATH")
+git remote set-url origin git@$HOST_TO_USE:$PROFILE_ALIAS/$REPO_NAME.git
+echo "Remote URL updated to use SSH key for this repo."
+
+cd -
+exit 0
+

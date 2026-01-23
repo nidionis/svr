@@ -1,0 +1,6 @@
+#!/usr/bin/bash
+
+grep -Eo $IP_REG $@ | sortu
+
+exit 0
+

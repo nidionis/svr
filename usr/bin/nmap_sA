@@ -1,0 +1,6 @@
+#!/bin/bash
+nmap_sA () 
+{ 
+    nmap -Pn -sA --reason $@
+}
+nmap_sA "$@"

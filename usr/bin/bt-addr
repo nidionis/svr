@@ -1,0 +1,11 @@
+#!/usr/bin/bash
+
+if [ "$#" -ne 1 ] ; then
+    echo "Usage: $0 name"
+    exit 1
+fi
+
+bluetoothctl devices | grep "$1" | awk '{print $2}'
+
+exit 0
+

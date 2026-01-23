@@ -1,0 +1,18 @@
+#!/usr/bin/bash
+
+ISO-${1:-"edited_iso"}
+WORKDIR=$(1:-"iso_edit"}
+
+if [ "$#" -lt 1 ] ; then
+    echo "Usage: $0 name [iso_edit]
+	note: delete iso_edit and convert it in the 
+	named file"
+    exit 1
+fi
+
+umount "$WORKDIR"/{proc,sys,dev}
+genisoimage -o $ISO -V "CUSTOM" -R -J "$WORKDIR"
+echo "note: genisoimage come from cdrkit package"
+
+exit 0
+

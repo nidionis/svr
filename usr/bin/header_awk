@@ -1,0 +1,6 @@
+#!/bin/bash
+header_awk () 
+{ 
+    grep --color=auto -RE $CFUNCTION src | cut -d: -f2 | sed s/\$/';'/g
+}
+header_awk "$@"

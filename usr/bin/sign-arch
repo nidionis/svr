@@ -1,0 +1,39 @@
+#!/usr/bin/bash
+
+DIR=signing_dir
+FILE=arch.iso
+
+if [ "$#" -ne 1 ] ; then
+    echo "Usage: $0 iso"
+	echo works in $DIR
+	echo copy iso as $FILE
+    exit 1
+fi
+
+mkdir $DIR
+
+cp $1 $DIR/$FILE
+
+cd $DIR
+
+osirrox -indev $FILE \
+	-extract_boot_images ./ \
+	-cpx /arch/boot/x86_64/vmlinuz-linux \
+	/EFI/BOOT/BOOTx64.EFI \
+	/EFI/BOOT/BOOTIA32.EFI \
+	/shellx64.efi \
+	/shellia32.efi ./
+
+chmod +w BOOTx64.EFI BOOTIA32.EFI shellx64.efi shellia32.efi vmlinuz-linux
+
+
+sbsign --key db.key --cert db.crt --output BOOTx64.EFI BOOTx64.EFI
+sbsign --key db.key --cert db.crt --output BOOTIA32.EFI BOOTIA32.EFI
+sbsign --key db.key --cert db.crt --output shellx64.efi shellx64.efi
+sbsign --key db.key --cert db.crt --output shellia32.efi shellia32.efi
+sbsign --key db.key --cert db.crt --output vmlinuz-linux vmlinuz-linux
+
+cd -
+
+exit 0
+

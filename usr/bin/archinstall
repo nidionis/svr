@@ -1,0 +1,11 @@
+#!/usr/bin/bash
+
+FILE="install/arch.sh"
+
+cd $MACHINE_DIR
+vim $FILE
+gitaddcommit $FILE
+cd -
+
+exit 0
+

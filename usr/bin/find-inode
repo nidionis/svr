@@ -1,0 +1,22 @@
+#!/usr/bin/bash
+
+if [ "$#" -lt 1 ] ; then
+    echo "Usage: $0 arg1 [arg2] [arg3]"
+    exit 1
+fi
+
+#!/bin/bash
+
+# Directory to search (default is current directory)
+search_dir="${1:-.}"
+
+# Find all files and their inode numbers, excluding directories and other types
+find "$search_dir" -type f -exec stat --format="%i %n" {} \; | sort -n | uniq -d -w 10 | while read inode file; do
+    echo "Inode: $inode"
+    find "$search_dir" -type f -inum "$inode" -exec ls -l {} \;
+    echo "-------------------------------"
+done
+
+
+exit 0
+

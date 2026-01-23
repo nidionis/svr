@@ -1,0 +1,11 @@
+#!/bin/bash
+expresso () 
+{ 
+    DIR="$HOME/perso/thm/interets/jeux/poker";
+    HISTORY="expresso_history.md";
+    SCRIPT=expresso_stat.sh;
+    TAIL=${1:-1000};
+    vim + $DIR/$HISTORY;
+    bash $DIR/$SCRIPT $DIR/$HISTORY $TAIL
+}
+expresso "$@"

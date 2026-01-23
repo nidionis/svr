@@ -1,0 +1,25 @@
+#!/bin/bash
+# save_redundant.sh
+# Sauvegarde/redondance GNUnet : 3 duplicatas
+
+# fichier source et clé de publication
+SRC="$1"
+if [ -z "$SRC" ]; then
+  echo "Usage: $0 <file>"
+  exit 1
+fi
+
+# Tag public de référence
+KEYWORD="backup:$(basename "$SRC")"
+
+# Publier le fichier (ajout au réseau GNUnet FS)
+gnunet-publish -n -k "$KEYWORD" -r 3 "$SRC"
+# -n : anonyme
+# -k : mot-clé (pour retrouver)
+# -r : redondance (nb de duplicatas)
+# -p : chemin du fichier
+
+# Vérifie que la donnée est bien publiée
+echo "Recherche des duplicatas GNUnet pour $KEYWORD..."
+gnunet-search "$KEYWORD"
+

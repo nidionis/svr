@@ -1,0 +1,10 @@
+*.config/Brav*
+*.swp
+.ssh/
+.ssh
+*ssh
+py-env/
+.ssh/*
+passwd_gen
+deb_dock/home_skel/.vim/.netrwhist
+**/__pycache__/

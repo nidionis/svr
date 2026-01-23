@@ -1,0 +1,42 @@
+#!/bin/bash
+set -eux
+
+# from vm to make a shared folder
+if [ $# -lt 1 ] ; then
+	echo """
+		IMG=${1:-disc_alpine.qcow2}
+		SIZE=${2:-16G}
+		RAM=${3:-2G}
+		CPUS=${4:-2}
+		SHARE=${5:-$PWD/share}
+	"""
+	echo "cheat sheet: mount -t 9p -o trans=virtio hostshare /mnt"
+	exit 1
+fi
+
+# --- Configurable defaults ---
+IMG=${1:-disc_alpine.qcow2}
+SIZE=${2:-16G}
+RAM=${3:-2G}
+CPUS=${4:-2}
+SHARE=${5:-$PWD/share}
+
+# --- Setup ---
+mkdir -p "$SHARE"
+
+# --- Optional install script ---
+# Drop any file named install.sh in ./share to execute it inside the VM later:
+# e.g. `bash /mnt/share/install.sh` after mounting
+
+
+
+qemu-system-x86_64 \
+	-m $RAM \
+	-boot once=d \
+	-drive file=$IMG \
+	-device virtio-vga \
+	-enable-kvm \
+	-display default,show-cursor=on \
+	-nic user,hostfwd=tcp::2222-:22 \
+	-virtfs local,id=share,path="$SHARE",security_model=none,mount_tag=hostshare
+

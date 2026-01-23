@@ -1,0 +1,30 @@
+#!/bin/bash
+report_crash () 
+{ 
+    . refresh_time;
+	NAME=$1;
+    TAIL_SIZE="100";
+    DIR_ORIGINAL=$PWD;
+    CRASH_DIR="$(echo ${DATE}_${TIME} | sed 's/:/-/g')";
+    F_NAME="${NAME}.crash";
+    DIR_RELATIVE="$HOME/journal/sysadmin/crash";
+    DIR_RELATIVE+="/${CRASH_DIR}";
+    if [ "$#" -ne 1 ]; then
+        echo "Usage: $0 FILE_NAME";
+        echo "default path is $DIR_RELATIVE/FILE_NAME.crash";
+        echo "write log outputs";
+        return 1;
+    fi;
+    mkdir -p $DIR_RELATIVE;
+    cd $DIR_RELATIVE;
+    if [ -f $F_NAME ]; then
+        BCK="/tmp/$F_NAME.backup";
+        echo "File exists moved to $BCK";
+        mv $F_NAME $BCK;
+    fi;
+    header_journal $F_NAME;
+    journalctl_prettyfy "100" "1" "0" "$F_NAME";
+    commit_if_modified "$F_NAME" "DELETE_IF_NOT_MODIFIED";
+    cd $DIR_ORIGINAL
+}
+report_crash "$@"

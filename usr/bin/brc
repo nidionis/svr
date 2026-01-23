@@ -1,0 +1,11 @@
+#!/bin/bash
+
+set -e
+
+MACHINE_DIR=${1:$MACHINE_DIR}
+MACHINE_DIR=${MACHINE_DIR:-"/svr"}
+F_NAME=".bashrc";
+cd "$MACHINE_DIR/usr/home";
+commit_if_modified "$F_NAME"
+cp -f $F_NAME /home/$F_NAME;
+cd -
