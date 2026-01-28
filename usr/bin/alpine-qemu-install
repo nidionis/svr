@@ -44,11 +44,10 @@ qemu-system-x86_64 \
 	-drive file=$IMG \
 	-display none \
 	-device virtio-vga \
-	-enable-kvm \
-	-net user,hostfwd=tcp::7777-:22
-	-net nic
-	#-virtfs local,id=share,path="$SHARE",security_model=none,mount_tag=hostshare
-
+	-display default,show-cursor=on \
+	-nic user,hostfwd=tcp::2222-:22 \
+	-virtfs local,id=share,path="$SHARE",security_model=none,mount_tag=hostshare
+	#-enable-kvm \
 
 ## --- Run QEMU with graphics + shared folder ---
 #qemu-system-x86_64 \
