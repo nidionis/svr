@@ -1,0 +1,60 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+SDX="${1:-sdb}"
+
+BOOT="${SDX}1"
+ROOT="${SDX}2"
+
+if [[ "$(id -u)" -ne 0 ]]; then
+  echo "Run as root."
+  echo "sdx as parameter"
+  exit 1
+fi
+
+echo "Target: /dev/${SDX}"
+read -rp "Proceed? (y/N) " yn
+[[ "${yn,,}" == "y" ]] || exit 0
+
+# wipe partitions
+fdisk /dev/"${SDX}" <<EOF
+o
+n
+p
+1
+
++1G
+t
+c
+n
+p
+2
+
+
+w
+EOF
+
+# format
+mkfs.vfat /dev/"${BOOT}"
+mkfs.ext4 /dev/"${ROOT}"
+
+# mount
+mkdir -p /mnt/boot /mnt/root
+mount /dev/"${BOOT}" /mnt/boot
+mount /dev/"${ROOT}" /mnt/root
+
+# download + extract
+cd /mnt/root
+wget -q http://os.archlinuxarm.org/os/ArchLinuxARM-rpi-armv7-latest.tar.gz
+bsdtar -xpf ArchLinuxARM-rpi-armv7-latest.tar.gz -C /mnt/root
+sync
+
+# move boot files
+mv /mnt/root/boot/* /mnt/boot/
+
+# cleanup
+#umount /mnt/boot /mnt/root
+#rm -rf /mnt/boot /mnt/root
+
+echo "Done. Insert SD card and boot the Pi."
+

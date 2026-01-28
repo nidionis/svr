@@ -1,14 +1,64 @@
-#Paypal
-151.101.129.21
-34.107.221.82
-
-#sigmanet#codium
-178.238.223.0/24
-#gititea
-34.217.253.146
+#local
+10.0.0.0/8
+192.168.0.0/8
 
 #microsoft (github)
 #20.0.0.0/11
+
+#winamax
+34.96.80.159
+
+#Paypal
+#34.107.221.82
+
+#ipinfo.io
+34.117.59.81
+
+#ifconfig.me
+34.160.111.145
+
+#plufinfirefox
+34.120.208.123
+
+#gitea
+34.217.253.146
+35.91.213.186
+
+#dns
+66.28.0.61
+
+#Thesuissbay
+85.195.200.187
+
+#ChatGpt
+104.18.32.47
+
+#lb.ludd.ltu.se #mirror
+130.240.16.130
+
+#ch.mirrors.cicku.me
+141.101.90.119
+
+#Paypal
+151.101.129.21
+
+#paiement infomaniak
+151.101.38.4
+
+#dl-cdn.alpinelinux.org
+151.101.10.132
+
+#plugin firefox
+151.101.193.91
+151.101.129.91
+151.101.205.91
+
+#sigmanet#codium
+178.238.223.0/24
+
+#infania pacman repo
+#ftpmirror.infania.net
+194.132.225.213
 
 #whois
 199.212.0.0/24
@@ -19,9 +69,10 @@
 #GitHub
 185.199.111.0/24
 
-#ChatGpt
-104.18.32.47
+#dns
+209.244.0.3
 
+<<<<<<< HEAD
 #ipinfo.io
 34.117.59.81
 
@@ -94,3 +145,7 @@
 #
 ##dns
 #209.244.0.3
+
+#debian
+146.75.0.0/20
+199.232.0.0/16

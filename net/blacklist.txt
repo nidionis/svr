@@ -1,15 +1,25 @@
+#Make crash archinstall
+8.8.8.8
+70.27.250.39
+94.105.98.61
+129.97.134.71
+185.21.134.11
+159.195.6.177
+172.65.90.7
+193.121.15.225
+
 34.0.0.0/8
 35.0.0.0/8
 
 #OVH
 37.59.32.0/19
 
-#Hetzner (arch install)
-46.62.192.0/22
-
 #Microsoft
 #40.114.177.156 -> lilie.duckdns.org, holland
 40.96.0.0/12
+
+#Hetzner (arch install)
+46.62.192.0/22
 
 #Staples us (arch install)
 50.74.152.24/29
@@ -18,13 +28,34 @@
 95.216.0.0/16
 
 #NETBLK Cox
-#98.174.32.0/19
-
-#OVH
-#37.59.32.0/19
+98.174.32.0/19
 
 #Cloud flare chatgpt
 #104.16.0.0/12
+
+#oman#mobile
+134.0.192.0/20
+
+#cloudflare eu (arch install)
+# RIPE
+# http addr
+141.0.0.0/8
+
+#Google
+142.250.0.0/15
+
+#Fastly ip geolocalisation (arch install)
+146.75.0.0/20
+
+#SKYCA-3#Owner:Fastly
+#pip atproto ?
+151.101.0.0/16
+
+#OVH france
+188.165.192.0/18
+
+#Amsterdam, possiblement a Linz il y a quelques annees
+193.0.0.0/20
 
 #oman#mobile
 #134.0.192.0/20

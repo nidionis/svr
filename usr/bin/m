@@ -12,4 +12,3 @@ mount $DEV $MNT_PT
 cd $MNT_PT
 
 exit 0
-
