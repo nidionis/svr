@@ -2,13 +2,14 @@
 clone () 
 { 
 	DEFAULT_ADDR=""
+	BASE="ssh://git@6.tcp.eu.ngrok.io:11272"
     if [ $# -ne "1" ]; then
         PROFIL_NAME="$1";
         PROJECT_NAME="$2";
-        git clone --recurse-submodules ssh://git@0.tcp.eu.ngrok.io:18869/$PROFIL_NAME/$PROJECT_NAME.git;
     else
+        PROFIL_NAME="painpain";
         PROJECT_NAME="$1";
-        git clone --recurse-submodules ssh://git@0.tcp.eu.ngrok.io:18869/painpain/$PROJECT_NAME.git;
     fi
+	git clone --recurse-submodules ${BASE}/$PROFIL_NAME/$PROJECT_NAME.git;
 }
 clone "$@"
