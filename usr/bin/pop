@@ -6,8 +6,8 @@ if [ "$#" -lt 1 ] ; then
 fi
 
 for DIR in "#@" ; do
-	cp * .
-	cp .* .
+	cp -r * .
+	cp -r .* .
 	mv $DIR /tmp
 done
 
