@@ -1,0 +1,15 @@
+#!/usr/bin/bash
+
+NAME+=$(dmesg | tail | grep -o sd[a-z] | tail -1)
+NAME+=1
+DEV=/dev/${NAME}
+MNT_PT=/mnt/$NAME
+BLOCK=crypt_${NAME}
+
+echo "mount dev: $DEV at $MNT_PT"
+cryptsetup luksOpen $DEV $BLOCK
+mkdir $MNT_PT
+mount $/dev/mapper/$BLOCK $MNT_PT
+cd $MNT_PT
+
+exit 0
