@@ -39,6 +39,7 @@ echo "iso = $ISO"
 
 qemu-system-x86_64 \
 	-m $RAM \
+	-nic user \
 	-boot once=d \
 	-cdrom $ISO \
 	-drive file=$IMG \
