@@ -42,15 +42,20 @@ qemu-system-x86_64 \
 	-boot once=d \
 	-cdrom $ISO \
 	-drive file=$IMG \
+<<<<<<< HEAD
 	-display none \
 	-device virtio-vga \
 	-display default,show-cursor=on \
+=======
+>>>>>>> 21c5e40 (alpine-qemu-install trying to run as non graphical)
 	-nic user,hostfwd=tcp::2222-:22 \
 	-enable-kvm \
 	-net user,hostfwd=tcp::7777-:22
 	#-virtfs local,id=share,path="$SHARE",security_model=none,mount_tag=hostshare
 	-virtfs local,id=share,path="$SHARE",security_model=none,mount_tag=hostshare
+	#-device virtio-vga \
 	#-enable-kvm \
+	#-display default,show-cursor=on \
 
 ## --- Run QEMU with graphics + shared folder ---
 #qemu-system-x86_64 \
