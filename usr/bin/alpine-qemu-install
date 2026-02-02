@@ -39,28 +39,18 @@ echo "iso = $ISO"
 
 qemu-system-x86_64 \
 	-m $RAM \
-<<<<<<< HEAD
 	-boot once=d \
 	-cdrom $ISO \
 	-drive file=$IMG \
-<<<<<<< HEAD
 	-display none \
 	-device virtio-vga \
 	-display default,show-cursor=on \
-=======
->>>>>>> 21c5e40 (alpine-qemu-install trying to run as non graphical)
 	-nic user,hostfwd=tcp::2222-:22 \
-	-device virtio-vga \
-=======
-	-boot d \
-	-cdrom $ISO \
-	-drive file=$IMG,if=virtio \
->>>>>>> d378d2f ( /!\ Big Merge REBASING)
 	-enable-kvm \
-	-net nic \
 	-net user,hostfwd=tcp::7777-:22
 	#-virtfs local,id=share,path="$SHARE",security_model=none,mount_tag=hostshare
-
+	-virtfs local,id=share,path="$SHARE",security_model=none,mount_tag=hostshare
+	#-enable-kvm \
 
 ## --- Run QEMU with graphics + shared folder ---
 #qemu-system-x86_64 \
