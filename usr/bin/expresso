@@ -6,6 +6,6 @@ expresso ()
     SCRIPT=expresso_stat.sh;
     TAIL=${1:-1000};
     vim + $DIR/$HISTORY;
-    bash $DIR/$SCRIPT $DIR/$HISTORY $TAIL
+    bash $SCRIPT $DIR/$HISTORY $TAIL
 }
 expresso "$@"
