@@ -1,6 +1,7 @@
 #!/usr/bin/bash
 
-ping -c1 | grep transmit
+ping -c1 9.9.9.9 | grep transmit
+ping -c1 wikipedia.org | grep transmit
 
 exit 0
 
