@@ -16,9 +16,6 @@
 # http addr
 141.0.0.0/8
 
-#pip atproto ?
-151.101.0.0/16
-
 #Cloud flare chatgpt
 #104.16.0.0/12
 
