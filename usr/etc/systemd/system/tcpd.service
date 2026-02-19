@@ -1,10 +1,11 @@
 [Unit]
-Description=watch connections
-After=network-online.target
+Description=TCP connections logger
+After=network.target
 
 [Service]
-ExecStart=/bin/bash /etc/systemd/system/tcpd.sh
 Type=simple
+ExecStart=/svr/usr/bin/tcpd /var/log/connections/lasts.tcpd
+Restart=always
 
 [Install]
 WantedBy=multi-user.target
