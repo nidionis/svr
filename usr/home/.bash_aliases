@@ -29,11 +29,12 @@ alias s="sudo -E"
 function src() {
 	d="$PWD"; while [ "$d" != "/" ]; do
 		for a in "$d/bin/activate" "$d/.*/bin/activate"; do
+			#echo "looking bin/activate in $d"
 			[ -f $a ] && source "$a" && break 2
 		done
 		d=$(dirname "$d")
 	done
-	source $HOME/.bashrc
+	source $HOME/.bashrc || true
 }
 
 
