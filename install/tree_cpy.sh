@@ -9,6 +9,4 @@ USR_DIR=$(realpath $USR_DIR)
 #uses ssymbolic link otherwise crossdevice troubles
 cp -s -p -r -f -t / $USR_DIR/.
 
-sudo chown root:root /
-sudo chown root:root /etc /var /run /dev /usr /sys
-sudo chmod 755 / /etc /var /usr
+sudo chown root:svr /etc /var /run /dev /usr /sys /

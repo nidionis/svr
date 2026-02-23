@@ -4,9 +4,9 @@
 
 
 if [ -f /etc/env ]; then
-	set -a
-	. /etc/env
-	set +a
+       set -a
+       . /etc/env
+       set +a
 fi
 
 set -o vi
@@ -122,21 +122,16 @@ export AWK_GREP_KEY="'{
     }
 }'"
 
-#ctags -R .
-
 bind -f  /home/.inputrc
 
-
 if [ -f /home/.bash_aliases ]; then
-	. /home/.bash_aliases
+       . /home/.bash_aliases
 fi
 
 # permet les accents
 setxkbmap us -variant intl
-source $PY_ENV/bin/activate
 
 #envsubst < ${MACHINE_PATH}/dotfiles/ssh/config.template > ~/.ssh/config
 
 #export PATH=~/.npm-global/bin:$PATH
-
 

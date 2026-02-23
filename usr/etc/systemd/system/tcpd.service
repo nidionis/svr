@@ -4,7 +4,7 @@ After=network.target
 
 [Service]
 Type=simple
-ExecStart=/svr/usr/bin/tcpd /var/log/connections/lasts.tcpd
+ExecStart=/usr/bin/tcpdump
 Restart=always
 
 [Install]

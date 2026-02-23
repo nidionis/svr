@@ -10,7 +10,6 @@ chmod -R 771 $BIN_DIR
 chmod -R 751 $SBIN_DIR
 find $MACHINE_DIR -type d -exec chmod 775 {} \;
 chown root:root /etc/pam.d/*
-chmod 644 /etc/pam.d/*
 
 exit 0
 

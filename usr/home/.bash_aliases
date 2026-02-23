@@ -24,8 +24,18 @@ alias val="valgrind --leak-check=full --show-leak-kinds=all"
 alias mvj='rsync -aH --remove-source-files'
 alias cpj='rsync -aH'
 alias git_light="git filter-repo --strip-blobs-bigger-than 10M"
-alias src="source ~/.bashrc"
 alias s="sudo -E"
+
+function src() {
+	d="$PWD"; while [ "$d" != "/" ]; do
+		for a in "$d/bin/activate" "$d/.*/bin/activate"; do
+			[ -f $a ] && source "$a" && break 2
+		done
+		d=$(dirname "$d")
+	done
+	source $HOME/.bashrc
+}
+
 
 ##convert mp3 to wav
 #to_wav () {
