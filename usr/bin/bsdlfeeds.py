@@ -59,11 +59,7 @@ def main():
     args = parser.parse_args()
 
     client = connect()
-<<<<<<< HEAD
     profile = get_feeds(client, args.handle, args.folder, cursor=cursor)
-=======
-    profile = get_feeds(client, args.handle, args.folder)
->>>>>>> 01ee0aacb9e93bd6572ab9049f26878733f8bf85
 
 
 

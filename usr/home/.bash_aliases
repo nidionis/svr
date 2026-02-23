@@ -27,14 +27,13 @@ alias git_light="git filter-repo --strip-blobs-bigger-than 10M"
 alias s="sudo -E"
 
 function src() {
+	source $HOME/.bashrc || true
 	d="$PWD"; while [ "$d" != "/" ]; do
-		for a in "$d/bin/activate" "$d/.*/bin/activate"; do
-			#echo "looking bin/activate in $d"
-			[ -f $a ] && source "$a" && break 2
+		for a in "$d/bin/activate" "$d/.env/bin/activate"; do
+			[ -f $a ] && echo "found at $a" && . "$a" && break 2
 		done
 		d=$(dirname "$d")
 	done
-	source $HOME/.bashrc || true
 }
 
 
