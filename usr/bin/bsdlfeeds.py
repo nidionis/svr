@@ -55,11 +55,11 @@ def get_feeds(client, profile, tmp_dir=TMP_DIR, save=False, cursor=None):
 def main():
     parser = argparse.ArgumentParser(description="Download Bluesky profile posts to JSON")
     parser.add_argument("handle", help="Bluesky handle (ex: ni-bot.bsky.social)")
-    parser.add_argument("--folder", default=TMP_DIR)
+    parser.add_argument("-d", "--folder", default=TMP_DIR)
     args = parser.parse_args()
 
     client = connect()
-    profile = get_feeds(client, args.handle, args.folder, cursor=cursor)
+    profile = get_feeds(client, args.handle, args.folder)
 
 
 
