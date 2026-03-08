@@ -9,8 +9,10 @@ clone ()
         PROJECT_NAME="$2";
         git clone --recurse-submodules $URL/$PROFIL_NAME/$PROJECT_NAME.git;
     else
+		PROFIL_NAME=painpain
         PROJECT_NAME="$1";
         git clone --recurse-submodules $URL/$PROFIL_NAME/$PROJECT_NAME.git;
     fi
+	git clone --recurse-submodules $URL/$PROFIL_NAME/$PROJECT_NAME.git;
 }
 clone "$@"

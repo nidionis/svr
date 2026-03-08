@@ -1,0 +1,8 @@
+#!/usr/bin/bash
+
+NB_LINES=${1:=5}
+for ((i=0;i<NB_LINES;i++))
+	do
+		history -d $(history | tail -n 1 | awk '{print $1}')
+	done
+history -w

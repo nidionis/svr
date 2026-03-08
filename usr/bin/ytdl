@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+
+# Wrapper that always uses Firefox cookies for YouTube
+
+if [ $# -lt 1 ]; then
+  echo "Usage: $0 <url> [extra yt-dlp args...]" >&2
+  exit 1
+fi
+
+# Change profile name if needed (e.g. default-release, yourprofile.default)
+BROWSER="firefox"
+PROFILE="default-release"   # or leave empty to let yt-dlp auto-detect
+
+if [ -n "$PROFILE" ]; then
+  yt-dlp --cookies-from-browser "${BROWSER}:${PROFILE}" "$@"
+else
+  yt-dlp --cookies-from-browser "$BROWSER" "$@"
+fi
+

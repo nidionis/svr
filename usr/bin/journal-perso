@@ -1,7 +1,7 @@
 #!/bin/bash
 journal-perso () 
 { 
-    . . refresh_time;
+    . refresh_time;
     DIR_ORIGINAL=$PWD;
     DIR=$PERSO_DIR;
     DATE_DIR="$YEAR/$MONTH/$DAY";
@@ -21,6 +21,7 @@ journal-perso ()
     else
         return 1;
     fi;
+    mkdir -p $DIR
     F_NAME+=".md";
     cd $DIR;
     PATH_="${DATE_DIR}/${LN_DIR}";

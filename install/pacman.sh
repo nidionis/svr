@@ -31,6 +31,7 @@ pacman --noconfirm -S makepkg
 pacman --noconfirm -S tree
 pacman --noconfirm -S vim
 pacman --noconfirm -S iwctl
+pacman --noconfirm -S ncdu
 pacman --noconfirm -S pciutils
 pacman --noconfirm -S git-filter-repo
 pacman --noconfirm -S xorg-setxkbmap

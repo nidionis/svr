@@ -39,16 +39,20 @@ echo "iso = $ISO"
 
 qemu-system-x86_64 \
 	-m $RAM \
+	-nic user \
 	-boot once=d \
 	-cdrom $ISO \
 	-drive file=$IMG \
 	-display none \
 	-device virtio-vga \
-	-enable-kvm \
+	-display default,show-cursor=on \
 	-net user,hostfwd=tcp::7777-:22
-	-net nic
 	#-virtfs local,id=share,path="$SHARE",security_model=none,mount_tag=hostshare
-
+	-device virtio-vga \
+	-enable-kvm \
+	-display default,show-cursor=on \
+	-display none \
+	-virtfs local,id=share,path="$SHARE",security_model=none,mount_tag=hostshare
 
 ## --- Run QEMU with graphics + shared folder ---
 #qemu-system-x86_64 \

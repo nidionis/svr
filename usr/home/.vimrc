@@ -87,8 +87,7 @@ autocmd BufNewFile *.c 0r ./.vim/templates/template.c
 
 set mouse=a
 
-inoremap {{ {}<ESC>O
-inoremap {;{ ;}<ESC>O
+inoremap { {<CR>}<Esc>O
 
 :nnoremap <Space> @q
 
@@ -102,3 +101,5 @@ set tags=./tags;,tags;
 
 syntax on
 set tags=./tags;/
+
+set smartindent

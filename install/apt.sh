@@ -31,10 +31,6 @@ apt install -y pip
 apt install -y curl
 apt install -y tree
 apt install -y ffmpeg
-apt install -y ffmpeg
-apt install -y nft
-apt install -y openvpn
-
 #apt install -y vlc
 #apt install -y terminator
 #apt install -y  gimp

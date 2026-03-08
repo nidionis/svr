@@ -4,9 +4,9 @@
 
 
 if [ -f /etc/env ]; then
-	set -a
-	. /etc/env
-	set +a
+       set -a
+       . /etc/env
+       set +a
 fi
 
 set -o vi
@@ -104,7 +104,7 @@ RESET_COLOR="$NO_COLOR"
 export GIT_EDITOR=vim
 
 BRANCH="$(git rev-parse --abbrev-ref HEAD)"
-PS1="\n${DATE_COLOR}\D{%y%m%d}${RESET_COLOR}-${TIME_COLOR}\t${RESET_COLOR}-${USER_COLOR}\u${RESET_COLOR}@${HOST_COLOR}\H${RESET_COLOR}-${DIR_COLOR}\w${RESET_COLOR}\n=> "
+PS1="\n\n${DATE_COLOR}\D{%y%m%d}${RESET_COLOR}-${TIME_COLOR}\t${RESET_COLOR}-${USER_COLOR}\u${RESET_COLOR}@${HOST_COLOR}\H${RESET_COLOR}-${DIR_COLOR}\w${RESET_COLOR}\n=> "
 
 export HISTCONTROL=ignorespace
 
@@ -122,21 +122,16 @@ export AWK_GREP_KEY="'{
     }
 }'"
 
-#ctags -R .
-
 bind -f  /home/.inputrc
 
-
 if [ -f /home/.bash_aliases ]; then
-	. /home/.bash_aliases
+       . /home/.bash_aliases
 fi
 
 # permet les accents
 setxkbmap us -variant intl
-source $PY_ENV/bin/activate
 
 #envsubst < ${MACHINE_PATH}/dotfiles/ssh/config.template > ~/.ssh/config
 
 #export PATH=~/.npm-global/bin:$PATH
-
 

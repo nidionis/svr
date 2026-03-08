@@ -4,11 +4,13 @@ set -eux
 # from vm to make a shared folder
 if [ $# -lt 1 ] ; then
 	echo """
-		IMG=${1:-disc_alpine.qcow2}
-		SIZE=${2:-16G}
-		RAM=${3:-2G}
-		CPUS=${4:-2}
-		SHARE=${5:-$PWD/share}
+IMG=${1:-disc_alpine.qcow2}
+SSH=${2:2223}
+SHARE=${3:-$PWD/share}
+CPUS=${4:-2}
+SIZE=${5:-16G}
+RAM=${6:-2G}
+GITEA=${7:-3000}
 	"""
 	echo "cheat sheet: mount -t 9p -o trans=virtio hostshare /mnt"
 	exit 1
@@ -16,10 +18,12 @@ fi
 
 # --- Configurable defaults ---
 IMG=${1:-disc_alpine.qcow2}
-SIZE=${2:-16G}
-RAM=${3:-2G}
+SSH=${2:-2223}
+SHARE=${3:-$PWD/share}
 CPUS=${4:-2}
-SHARE=${5:-$PWD/share}
+SIZE=${5:-16G}
+RAM=${6:-2G}
+GITEA=${7:-3000}
 
 # --- Setup ---
 mkdir -p "$SHARE"
@@ -37,6 +41,6 @@ qemu-system-x86_64 \
 	-device virtio-vga \
 	-enable-kvm \
 	-display default,show-cursor=on \
-	-nic user,hostfwd=tcp::2222-:22 \
+	-nic user,hostfwd=tcp::"${SSH}"-:22,hostfwd=tcp::"${GITEA}"-:3000 \
 	-virtfs local,id=share,path="$SHARE",security_model=none,mount_tag=hostshare
 

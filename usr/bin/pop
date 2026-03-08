@@ -1,0 +1,16 @@
+#!/usr/bin/bash
+
+
+if [ "$#" -lt 1 ] ; then
+    echo "Usage: $0 arg1 [arg2] [arg3]"
+    exit 1
+fi
+
+for DIR in "$@" ; do
+	cp -r $DIR/* .
+	cp -r $DIR/.* .
+	mv $DIR /tmp
+done
+
+exit 0
+

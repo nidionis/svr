@@ -1,0 +1,27 @@
+#!/bin/bash
+
+SRC=/var/log/connections/lasts.tcpd
+DST=/var/log/connections/archive
+DATE=$(date "+%y%m%d-%H%M")
+MAXSIZE=$((1024*1024*1024))  # 1 Go
+
+mkdir -p "$DST"
+
+# 1️⃣ Archivage IP en .txt
+find "$SRC" -name "*.log" -mmin -30 \
+  | xargs grepip \
+  > "$DST/connections-$DATE.txt"
+
+# 2️⃣ Archiver les logs dans un tar.gz
+ARCHIVE="$DST/logs-$DATE.tar.gz"
+find "$SRC" -name "*.log" -print0 | tar --null -czf "$ARCHIVE" --remove-files -T -
+
+# 3️⃣ Vérifier la taille totale des archives et supprimer les plus anciennes si >1 Go
+total_size=$(du -cb "$DST"/*.tar.gz 2>/dev/null | tail -1 | awk '{print $1}')
+
+while [ "$total_size" -ge $MAXSIZE ]; do
+    oldest=$(ls -1t "$DST"/*.tar.gz | tail -1)
+    [ -f "$oldest" ] && rm -f "$oldest"
+    total_size=$(du -cb "$DST"/*.tar.gz 2>/dev/null | tail -1 | awk '{print $1}')
+done
+

@@ -1,6 +1,11 @@
 #!/bin/bash
 aur () 
 { 
-    git clone https://aur.archlinux.org/$1.git
+	DIR=~/tmp
+	echo "note: ceci est un script maison"
+	mkdir $DIR
+    git clone https://aur.archlinux.org/$1.git $DIR/$1
+	cd $DIR/$1
+	makepkg -si
 }
 aur "$@"

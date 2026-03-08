@@ -12,6 +12,8 @@ apk add whois
 apk add nmap
 apk add man-db
 apk add vim
+apk add iproute2
+apk add gitea
 apk add git-filter-repo
 
 

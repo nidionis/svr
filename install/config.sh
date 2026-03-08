@@ -21,3 +21,10 @@ cat $SUDO_HOME/$FILE > $SKEL/$FILE
 
 groupadd svr
 usermod -aG svr $SUDO_USER
+
+systemctl daemon-reexec
+systemctl daemon-reload
+systemctl enable tcpd
+systemctl start tcpd
+
+

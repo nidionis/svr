@@ -13,6 +13,7 @@ LOG_CONN_DIR=/var/log/tcpd
 LOG_CONN=$LOG_CONN_DIR/lasts.log
 NET_STATUS=/tmp/status.txt
 SSH=177
+IAMUTOPIST=128.65.199.189
 
 JOURNAL_DIR=$HOME/journal
 PERSO_DIR=$HOME/perso
