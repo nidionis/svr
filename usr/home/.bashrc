@@ -47,7 +47,7 @@ export IMAGE_REG="jpg|jpeg|png|gif|bmp|webp|tiff|ico|heic|svg|jfif"
 
 export MEDIA_REG="\.(${AUDIO_REG}|${VIDEO_REG}|${IMAGE_REG})$"
 
-PATH="/bin:/sbin:/usr/bin:/usr/sbin"
+PATH="/bin:/sbin:/usr/bin:/usr/sbin:/opt"
 PATH="$PATH:$SBIN_DIR"
 PATH="$PATH:$BIN_DIR"
 export PATH
