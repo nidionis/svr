@@ -6,6 +6,10 @@ import sys
 from collections import defaultdict
 from pathlib import Path
 import argparse
+import re
+from typing import Pattern
+
+REGEX: Pattern[str] = re.compile(r"...")
 
 # ---- ensure spacy and model ----
 try:

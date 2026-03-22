@@ -3,4 +3,4 @@
 cat $MACHINE_DIR/usr/etc/openvpn/.pot.swp
 #openvpn /etc/openvpn/client/ch-free-2.protonvpn.tcp.ovpn
 #openvpn /etc/openvpn/client/ch-free-4.protonvpn.tcp.ovpn
-openvpn /etc/openvpn/client/ch-free-6.protonvpn.tcp.ovpn
+wg-quick up /etc/openvpn/client/my.conf
