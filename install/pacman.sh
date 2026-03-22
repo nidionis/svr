@@ -37,4 +37,5 @@ pacman --noconfirm -S git-filter-repo
 pacman --noconfirm -S xorg-setxkbmap
 pacman --noconfirm -S xorg-xhost
 pacman --noconfirm -S qemu-full
+pacman --noconfirm -S qbittorrent
 mandb #rend possible la commande apropos
