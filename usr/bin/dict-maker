@@ -1,99 +1,48 @@
 #!/usr/bin/env python3
 import os
 import re
-import subprocess
-import sys
 from collections import defaultdict
 from pathlib import Path
 import argparse
-import re
-from typing import Pattern
-
-REGEX: Pattern[str] = re.compile(r"...")
-
-# ---- ensure spacy and model ----
-try:
-    import spacy
-except ImportError:
-    subprocess.check_call([sys.executable, "-m", "pip", "install", "spacy"])
-    import spacy
-
-def load_model(name="fr_core_news_sm"):
-    try:
-        return spacy.load(name)
-    except OSError:
-        subprocess.check_call([sys.executable, "-m", "spacy", "download", name])
-        return spacy.load(name)
 
 # ---- args ----
-argparser = argparse.ArgumentParser()
-argparser.add_argument("-v","--vault", default=".", help="Path to Obsidian vault")
-argparser.add_argument("-d","--dict", default="Dictionary", help="Name of the dictionary directory")
-args = argparser.parse_args()
+parser = argparse.ArgumentParser()
+parser.add_argument("-v", "--vault", default=".", help="Path to Obsidian vault")
+parser.add_argument("-d", "--dict", default="Dictionary", help="Name of the dictionary directory")
+args = parser.parse_args()
 
 # ---- config ----
 VAULT_DIR = Path(args.vault)
 DICT_DIR = VAULT_DIR / args.dict
 WORD_REGEX = re.compile(r"\b[a-zA-Z]{3,}\b")
 
-nlp = load_model("fr_core_news_sm")
-
 # ---- prep ----
 DICT_DIR.mkdir(exist_ok=True)
 lemma_map = defaultdict(lambda: {"forms": set(), "files": set()})
 
-# ---- scan ----
+# ---- stopwords ----
+STOPWORDS = {
+    os.path.basename(os.getcwd()), "author", "jpeg", "jpg", "post", "like", "likes", "repost",
+    "avatar", "bsky", "media", "thumbnail", "thumnail", "http", "https", "com", "followers",
+    "following", "unknown", "date", "social", "replier", "replie", "for", "you", "from",
+    "to", "script", "grep", "localhost", "sudo", "not"
+}
 
-nlp.Defaults.stop_words.add(os.path.basename(os.getcwd()))
-nlp.Defaults.stop_words.add("author")
-nlp.Defaults.stop_words.add("jpeg")
-nlp.Defaults.stop_words.add("jpg")
-nlp.Defaults.stop_words.add("post")
-nlp.Defaults.stop_words.add("like")
-nlp.Defaults.stop_words.add("likes")
-nlp.Defaults.stop_words.add("repost")
-nlp.Defaults.stop_words.add("avatar")
-nlp.Defaults.stop_words.add("bsky")
-nlp.Defaults.stop_words.add("media")
-nlp.Defaults.stop_words.add("thumnail")
-nlp.Defaults.stop_words.add("http")
-nlp.Defaults.stop_words.add("https")
-nlp.Defaults.stop_words.add("com")
-nlp.Defaults.stop_words.add("followers")
-nlp.Defaults.stop_words.add("following")
-nlp.Defaults.stop_words.add("unknown")
-nlp.Defaults.stop_words.add("date")
-nlp.Defaults.stop_words.add("social")
-nlp.Defaults.stop_words.add("thumbnail")
-nlp.Defaults.stop_words.add("replier")
-nlp.Defaults.stop_words.add("replie")
-nlp.Defaults.stop_words.add("for")
-nlp.Defaults.stop_words.add("you")
-nlp.Defaults.stop_words.add("from")
-nlp.Defaults.stop_words.add("to")
-nlp.Defaults.stop_words.add("script")
-nlp.Defaults.stop_words.add("grep")
-nlp.Defaults.stop_words.add("localhost")
-nlp.Defaults.stop_words.add("sudo")
-nlp.Defaults.stop_words.add("not")
-
+# ---- scan vault ----
 for md_file in VAULT_DIR.rglob("*.md"):
-    if "Dictionary" in md_file.parts:
+    if DICT_DIR.name in md_file.parts:
         continue
-    text = md_file.read_text(encoding="utf-8", errors="ignore")
-    words = WORD_REGEX.findall(text.lower())
-    doc = nlp(" ".join(words))
-    for token in doc:
-        if token.is_stop:
+    text = md_file.read_text(encoding="utf-8", errors="ignore").lower()
+    words = WORD_REGEX.findall(text)
+    for word in words:
+        if word in STOPWORDS:
             continue
-        lemma = token.lemma_
-        if lemma.isalpha() and lemma not in nlp.Defaults.stop_words:
-            lemma_map[lemma]["forms"].add(token.text)
-            lemma_map[lemma]["files"].add(md_file)
+        lemma_map[word]["forms"].add(word)
+        lemma_map[word]["files"].add(md_file)
 
 print(f"Found {len(lemma_map)} lemmas.")
 
-# ---- write ----
+# ---- write dictionary ----
 for lemma, data in lemma_map.items():
     if len(data["files"]) < 2:
         continue
@@ -110,6 +59,4 @@ for lemma, data in lemma_map.items():
             rel_path = md.relative_to(VAULT_DIR)
             f.write(f"- [[{rel_path}]]\n")
 
-
 print(f"Dictionary generated in {DICT_DIR}")
-
