@@ -7,6 +7,7 @@ USR_DIR=${1:-"no_dir"}
 USR_DIR=$(realpath $USR_DIR)
 
 #uses ssymbolic link otherwise crossdevice troubles
-cp -s -p -r -f -t / $USR_DIR/.
+cp -s -p -r -f -t / $USR_DIR/*/.[^.]*
 
-sudo chown root:svr /etc /var /run /dev /usr /sys /
+useradd svr
+chown root:svr /etc /var /run /dev /usr /sys / /svr
