@@ -29,11 +29,12 @@ qemu-system-x86_64 \
   -m "$RAM" \
   -cpu host \
   -smp "$CPUS" \
-  -boot d \
   -cdrom "$ISO" \
-  -drive file="$IMG",format=qcow2 \
-  -device virtio-vga \
-  -display default,show-cursor=on \
-  -nic user,hostfwd=tcp::2222-:22 \
-  -virtfs local,id=share,path="$SHARE",security_model=none,mount_tag=hostshare
+  -nic user \
+  -drive file="$IMG",format=qcow
+  #-boot d \
+  # -netdev user,id=net0,dns=1.1.1.1 \
+  # -device virtio-net-pci,netdev=net0 \
+  # -display default,show-cursor=on \
+  # -virtfs local,id=share,path="$SHARE",security_model=none,mount_tag=hostshare
 

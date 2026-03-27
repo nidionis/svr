@@ -1,14 +1,15 @@
 #!/bin/bash
 clone () 
 { 
-	URL=ssh://git@6.tcp.eu.ngrok.io:11272
+	URL=git@github.com:
+	PROFIL_NAME=nidionis
+	DEFAULT_ADDR=""
     if [ $# -ne "1" ]; then
         PROFIL_NAME="$1";
         PROJECT_NAME="$2";
     else
-		PROFIL_NAME=painpain
         PROJECT_NAME="$1";
     fi
-	git clone --recurse-submodules $URL/$PROFIL_NAME/$PROJECT_NAME.git;
+	git clone --recurse-submodules $URL$PROFIL_NAME/$PROJECT_NAME.git;
 }
 clone "$@"

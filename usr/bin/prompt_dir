@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+
+root="${1:-.}"
+
+find "$root" -type f -print0 |
+while IFS= read -r -d '' file; do
+  printf -- "---\n%s\n-\n" "$file"
+  cat -- "$file"
+  printf "\n"
+done
+
