@@ -1,20 +1,21 @@
 #!/usr/bin/env python
+#!/usr/bin/env python3
 import sys
 import subprocess
+import re
+from datetime import datetime
 
 # === AUTO INSTALL ===
-def ensure_package(pkg):
+def ensure(pkg):
     try:
         __import__(pkg)
     except ImportError:
         subprocess.check_call([sys.executable, "-m", "pip", "install", pkg])
 
-ensure_package("pandas")
-ensure_package("matplotlib")
+ensure("pandas")
+ensure("matplotlib")
 
 import pandas as pd
-import re
-from datetime import datetime
 import matplotlib.pyplot as plt
 
 # === ARGS ===
@@ -22,51 +23,57 @@ if len(sys.argv) < 2:
     print("Usage: python script.py input.txt [output.csv]")
     sys.exit(1)
 
-INPUT_FILE = sys.argv[1]
-OUTPUT_FILE = sys.argv[2] if len(sys.argv) > 2 else "poker_clean.csv"
+INPUT = sys.argv[1]
+OUTPUT = sys.argv[2] if len(sys.argv) > 2 else "poker_clean.csv"
 
 # === HELPERS ===
-def clean_money(value):
-    if not value or value.strip() in ["-", ""]:
+def money(x):
+    if not x or x.strip() in ["-", ""]:
         return 0.0
-    return float(value.replace("€", "").replace(",", ".").strip())
+    return float(x.replace("€", "").replace(",", ".").strip())
 
-def get_category(name):
+def category(name):
     n = name.lower()
-    if "freeroll" in n:
-        return "freeroll"
-    if "nitro" in n:
-        return "nitro"
+    if "freeroll" in n: return "freeroll"
+    if "nitro" in n: return "nitro"
     return "expresso"
 
-def get_stake(b):
+def stake(b):
     return "micro" if b <= 1 else "low" if b <= 5 else "mid" if b <= 20 else "high"
 
-def get_session(h):
-    return "morning" if 6 <= h < 12 else "afternoon" if 12 <= h < 18 else "evening" if 18 <= h < 24 else "night"
+def session(h):
+    if 6 <= h < 12: return "morning"
+    if 12 <= h < 18: return "afternoon"
+    if 18 <= h < 24: return "evening"
+    return "night"
 
 # === PARSE ===
 rows = []
+errors = 0
 
-with open(INPUT_FILE, "r", encoding="utf-8") as f:
+with open(INPUT, encoding="utf-8") as f:
     for line in f:
-        if not line.strip():
+        raw = line.strip()
+        if not raw:
             continue
 
-        parts = re.split(r"\s{2,}", line.strip())
+        parts = re.split(r"\s{2,}", raw)
 
         try:
+            # DEBUG FIRST RUN ONLY (comment after)
+            # print(parts)
+
             dt = datetime.strptime(parts[0], "%d/%m/%Y %H:%M:%S")
             name = parts[1]
-            buy = float(parts[2])
-            players = int(parts[5])
+            buy = float(parts[2]) if len(parts) > 2 else 0.0
+            players = int(parts[5]) if len(parts) > 5 and parts[5].isdigit() else None
 
-            pos = None if parts[6] == "-" else parts[6]
-            prize = clean_money(parts[7]) if len(parts) > 7 else 0.0
-            net = clean_money(parts[8]) if len(parts) > 8 else 0.0
+            pos = parts[6] if len(parts) > 6 and parts[6] != "-" else None
+            prize = money(parts[7]) if len(parts) > 7 else 0.0
+            net = money(parts[8]) if len(parts) > 8 else 0.0
 
             profit = net - buy
-            hour = dt.hour
+            h = dt.hour
 
             rows.append({
                 "datetime": dt,
@@ -77,23 +84,39 @@ with open(INPUT_FILE, "r", encoding="utf-8") as f:
                 "prize": prize,
                 "net": net,
                 "profit": profit,
-                "category": get_category(name),
-                "stake": get_stake(buy),
-                "hour": hour,
+                "category": category(name),
+                "stake": stake(buy),
+                "hour": h,
                 "day": dt.strftime("%A"),
-                "session": get_session(hour),
+                "session": session(h),
                 "result": "win" if pos == "1" else "itm" if prize > 0 else "loss"
             })
 
         except Exception as e:
-            print("Skip:", line.strip(), "|", e)
+            errors += 1
+            if errors < 5:
+                print("Skip:", raw)
+                print("Reason:", e)
 
-# === DATAFRAME ===
-df = pd.DataFrame(rows).sort_values("datetime")
+# === VALIDATION ===
+if not rows:
+    print("❌ No valid rows parsed. Your format is different. Enable debug print.")
+    sys.exit(1)
+
+df = pd.DataFrame(rows)
+
+if "datetime" not in df.columns:
+    print("❌ Broken parse. Columns:", df.columns)
+    sys.exit(1)
+
+# === PROCESS ===
+df = df.sort_values("datetime")
 df["cum_profit"] = df["profit"].cumsum()
 
-df.to_csv(OUTPUT_FILE, index=False)
-print("Saved:", OUTPUT_FILE)
+# === SAVE ===
+df.to_csv(OUTPUT, index=False)
+print(f"✅ Saved {len(df)} rows → {OUTPUT}")
+print(f"⚠️ Skipped lines: {errors}")
 
 # === GRAPH ===
 plt.figure()
