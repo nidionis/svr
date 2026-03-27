@@ -118,6 +118,12 @@ df.to_csv(OUTPUT, index=False)
 print(f"✅ Saved {len(df)} rows → {OUTPUT}")
 print(f"⚠️ Skipped lines: {errors}")
 
+print("Games:", len(df))
+print("Total profit:", df["profit"].sum())
+print("ROI:", df["profit"].sum() / df["buy_in"].sum())
+print("Win rate:", (df["position"] == "1").mean())
+print("ITM:", (df["prize"] > 0).mean())
+
 # === GRAPH ===
 plt.figure()
 plt.plot(df["datetime"], df["cum_profit"])
