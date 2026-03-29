@@ -54,8 +54,8 @@ def extract_text(url, max_chars=300):
 def main():
     parser = argparse.ArgumentParser(description="Recherche + extraction de texte")
     parser.add_argument("query", type=str, help="Terme de recherche")
-    parser.add_argument("-n", "--number", type=int, default=3, help="Nombre de résultats")
-    parser.add_argument("--chars", type=int, default=300, help="Nombre de caractères à extraire")
+    parser.add_argument("-n", "--number", type=int, default=5, help="Nombre de résultats")
+    parser.add_argument("--chars", type=int, default=1000, help="Nombre de caractères à extraire")
 
     args = parser.parse_args()
 
