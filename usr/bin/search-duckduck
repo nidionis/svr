@@ -1,0 +1,36 @@
+#!/usr/bin/env python
+
+import requests
+from bs4 import BeautifulSoup
+
+def recherche_duckduckgo(query, n=5):
+    url = "https://html.duckduckgo.com/html/"
+    params = {"q": query}
+
+    headers = {
+        "User-Agent": "Mozilla/5.0"
+    }
+
+    response = requests.post(url, data=params, headers=headers)
+    soup = BeautifulSoup(response.text, "html.parser")
+
+    results = []
+
+    for result in soup.find_all("a", class_="result__a", limit=n):
+        title = result.get_text()
+        link = result.get("href")
+        results.append((title, link))
+
+    return results
+
+
+# Exemple d'utilisation
+if __name__ == "__main__":
+    query = "intelligence artificielle"
+    n = 5
+
+    results = recherche_duckduckgo(query, n)
+
+    for i, (title, link) in enumerate(results, 1):
+        print(f"{i}. {title}")
+        print(f"   {link}\n")
