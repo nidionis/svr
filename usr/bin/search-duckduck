@@ -1,7 +1,18 @@
 #!/usr/bin/env python
+import sys
+import subprocess
+
+# Vérifie et installe bs4 si nécessaire
+try:
+    from bs4 import BeautifulSoup
+except ImportError:
+    print("bs4 non trouvé, installation en cours...")
+    subprocess.check_call([sys.executable, "-m", "pip", "install", "beautifulsoup4"])
+    from bs4 import BeautifulSoup
 
 import requests
-from bs4 import BeautifulSoup
+import argparse
+
 
 def recherche_duckduckgo(query, n=5):
     url = "https://html.duckduckgo.com/html/"
@@ -24,13 +35,19 @@ def recherche_duckduckgo(query, n=5):
     return results
 
 
-# Exemple d'utilisation
-if __name__ == "__main__":
-    query = "intelligence artificielle"
-    n = 5
+def main():
+    parser = argparse.ArgumentParser(description="Recherche DuckDuckGo simple")
+    parser.add_argument("query", type=str, help="Terme de recherche")
+    parser.add_argument("-n", "--number", type=int, default=5, help="Nombre de résultats")
 
-    results = recherche_duckduckgo(query, n)
+    args = parser.parse_args()
+
+    results = recherche_duckduckgo(args.query, args.number)
 
     for i, (title, link) in enumerate(results, 1):
         print(f"{i}. {title}")
         print(f"   {link}\n")
+
+
+if __name__ == "__main__":
+    main()
