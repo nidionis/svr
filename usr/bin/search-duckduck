@@ -2,72 +2,94 @@
 
 import sys
 import subprocess
+import time
+import random
 
-# Vérifie et installe les dépendances si nécessaire
+
 def ensure_package(pkg):
     try:
         __import__(pkg)
     except ImportError:
-        print(f"{pkg} non trouvé, installation...")
         subprocess.check_call([sys.executable, "-m", "pip", "install", pkg])
 
-ensure_package("bs4")
-ensure_package("requests")
+
+for pkg in ("bs4", "requests"):
+    ensure_package(pkg)
 
 from bs4 import BeautifulSoup
 import requests
 import argparse
 
 
-def recherche_duckduckgo(query, n=5):
-    url = "https://html.duckduckgo.com/html/"
-    headers = {"User-Agent": "Mozilla/5.0"}
+def create_session():
+    session = requests.Session()
+    session.headers.update({
+        "User-Agent": "Mozilla/5.0"
+    })
+    return session
 
-    response = requests.post(url, data={"q": query}, headers=headers)
+
+def fetch(session, method, url, **kwargs):
+    for _ in range(3):
+        try:
+            response = session.request(method, url, timeout=10, **kwargs)
+            if response.status_code == 200:
+                return response
+            time.sleep(5)
+        except requests.RequestException:
+            time.sleep(5)
+    return None
+
+
+def recherche_duckduckgo(session, query, n):
+    url = "https://html.duckduckgo.com/html/"
+    response = fetch(session, "POST", url, data={"q": query})
+
+    if not response:
+        return []
+
     soup = BeautifulSoup(response.text, "html.parser")
 
     results = []
-    for result in soup.find_all("a", class_="result__a", limit=n):
-        title = result.get_text()
+    for result in soup.select("a.result__a")[:n]:
+        title = result.get_text(strip=True)
         link = result.get("href")
-        results.append((title, link))
+        if link:
+            results.append((title, link))
 
+    time.sleep(random.uniform(1.5, 3.5))
     return results
 
 
-def extract_text(url, max_chars=300):
-    try:
-        headers = {"User-Agent": "Mozilla/5.0"}
-        response = requests.get(url, headers=headers, timeout=5)
+def extract_text(session, url, max_chars):
+    response = fetch(session, "GET", url)
 
-        soup = BeautifulSoup(response.text, "html.parser")
+    if not response:
+        return "[Erreur: accès impossible]"
 
-        # Récupère le texte brut
-        text = soup.get_text(separator=" ", strip=True)
+    soup = BeautifulSoup(response.text, "html.parser")
+    text = soup.get_text(separator=" ", strip=True)
 
-        return text[:max_chars] + "..."
-
-    except Exception as e:
-        return f"[Erreur lors de l'accès au site: {e}]"
+    return (text[:max_chars] + "...") if len(text) > max_chars else text
 
 
-def main():
+def main(argc, argv):
     parser = argparse.ArgumentParser(description="Recherche + extraction de texte")
-    parser.add_argument("query", type=str, help="Terme de recherche")
-    parser.add_argument("-n", "--number", type=int, default=5, help="Nombre de résultats")
-    parser.add_argument("--chars", type=int, default=1000, help="Nombre de caractères à extraire")
+    parser.add_argument("query", type=str)
+    parser.add_argument("-n", "--number", type=int, default=5)
+    parser.add_argument("--chars", type=int, default=1000)
 
-    args = parser.parse_args()
+    args = parser.parse_args(argv[1:])
 
-    results = recherche_duckduckgo(args.query, args.number)
+    session = create_session()
+    results = recherche_duckduckgo(session, args.query, args.number)
 
     for i, (title, link) in enumerate(results, 1):
         print(f"\n{i}. {title}")
         print(f"URL: {link}")
-
-        snippet = extract_text(link, args.chars)
+        snippet = extract_text(session, link, args.chars)
         print(f"Extrait: {snippet}")
 
 
 if __name__ == "__main__":
-    main()
+    main(len(sys.argv), sys.argv)
