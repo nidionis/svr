@@ -129,7 +129,7 @@ if [ -f /home/.bash_aliases ]; then
 fi
 
 # permet les accents
-setxkbmap us -variant intl
+#setxkbmap us -variant intl
 
 #envsubst < ${MACHINE_PATH}/dotfiles/ssh/config.template > ~/.ssh/config
 

@@ -1,0 +1,135 @@
+#!/usr/bin/env python
+#!/usr/bin/env python3
+import sys
+import subprocess
+import re
+from datetime import datetime
+
+# === AUTO INSTALL ===
+def ensure(pkg):
+    try:
+        __import__(pkg)
+    except ImportError:
+        subprocess.check_call([sys.executable, "-m", "pip", "install", pkg])
+
+ensure("pandas")
+ensure("matplotlib")
+
+import pandas as pd
+import matplotlib.pyplot as plt
+
+# === ARGS ===
+if len(sys.argv) < 2:
+    print("Usage: python script.py input.txt [output.csv]")
+    sys.exit(1)
+
+INPUT = sys.argv[1]
+OUTPUT = sys.argv[2] if len(sys.argv) > 2 else "poker_clean.csv"
+
+# === HELPERS ===
+def money(x):
+    if not x or x.strip() in ["-", ""]:
+        return 0.0
+    return float(x.replace("€", "").replace(",", ".").strip())
+
+def category(name):
+    n = name.lower()
+    if "freeroll" in n: return "freeroll"
+    if "nitro" in n: return "nitro"
+    return "expresso"
+
+def stake(b):
+    return "micro" if b <= 1 else "low" if b <= 5 else "mid" if b <= 20 else "high"
+
+def session(h):
+    if 6 <= h < 12: return "morning"
+    if 12 <= h < 18: return "afternoon"
+    if 18 <= h < 24: return "evening"
+    return "night"
+
+# === PARSE ===
+rows = []
+errors = 0
+
+with open(INPUT, encoding="utf-8") as f:
+    for line in f:
+        raw = line.strip()
+        if not raw:
+            continue
+
+        parts = re.split(r"\s{2,}", raw)
+
+        try:
+            # DEBUG FIRST RUN ONLY (comment after)
+            # print(parts)
+
+            dt = datetime.strptime(parts[0], "%d/%m/%Y %H:%M:%S")
+            name = parts[1]
+            buy = float(parts[2]) if len(parts) > 2 else 0.0
+            players = int(parts[5]) if len(parts) > 5 and parts[5].isdigit() else None
+
+            pos = parts[6] if len(parts) > 6 and parts[6] != "-" else None
+            prize = money(parts[7]) if len(parts) > 7 else 0.0
+            net = money(parts[8]) if len(parts) > 8 else 0.0
+
+            profit = net - buy
+            h = dt.hour
+
+            rows.append({
+                "datetime": dt,
+                "game": name,
+                "buy_in": buy,
+                "players": players,
+                "position": pos,
+                "prize": prize,
+                "net": net,
+                "profit": profit,
+                "category": category(name),
+                "stake": stake(buy),
+                "hour": h,
+                "day": dt.strftime("%A"),
+                "session": session(h),
+                "result": "win" if pos == "1" else "itm" if prize > 0 else "loss"
+            })
+
+        except Exception as e:
+            errors += 1
+            if errors < 5:
+                print("Skip:", raw)
+                print("Reason:", e)
+
+# === VALIDATION ===
+if not rows:
+    print("❌ No valid rows parsed. Your format is different. Enable debug print.")
+    sys.exit(1)
+
+df = pd.DataFrame(rows)
+
+if "datetime" not in df.columns:
+    print("❌ Broken parse. Columns:", df.columns)
+    sys.exit(1)
+
+# === PROCESS ===
+df = df.sort_values("datetime")
+df["cum_profit"] = df["profit"].cumsum()
+
+# === SAVE ===
+df.to_csv(OUTPUT, index=False)
+print(f"✅ Saved {len(df)} rows → {OUTPUT}")
+print(f"⚠️ Skipped lines: {errors}")
+
+print("Games:", len(df))
+print("Total profit:", df["profit"].sum())
+print("ROI:", df["profit"].sum() / df["buy_in"].sum())
+print("Win rate:", (df["position"] == "1").mean())
+print("ITM:", (df["prize"] > 0).mean())
+
+# === GRAPH ===
+plt.figure()
+plt.plot(df["datetime"], df["cum_profit"])
+plt.xlabel("Time")
+plt.ylabel("€")
+plt.title("Cumulative Profit")
+plt.xticks(rotation=45)
+plt.tight_layout()
+plt.show()

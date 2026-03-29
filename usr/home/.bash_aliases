@@ -29,7 +29,7 @@ alias s="sudo -E"
 function src() {
 	source $HOME/.bashrc || true
 	d="$PWD"; while [ "$d" != "/" ]; do
-		for a in "$d/bin/activate" "$d/.env/bin/activate"; do
+		for a in "$d/bin/activate" "$d/.venv/bin/activate" "$d/.env/bin/activate"; do
 			[ -f $a ] && echo "found at $a" && . "$a" && break 2
 		done
 		d=$(dirname "$d")

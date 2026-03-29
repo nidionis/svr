@@ -1,0 +1,113 @@
+#!/usr/bin/env python3
+import sys
+import subprocess
+import os
+
+# === AUTO INSTALL ===
+def ensure(pkg):
+    try:
+        __import__(pkg)
+    except ImportError:
+        subprocess.check_call([sys.executable, "-m", "pip", "install", pkg])
+
+ensure("pandas")
+ensure("matplotlib")
+
+import pandas as pd
+import matplotlib.pyplot as plt
+
+# === ARGS ===
+if len(sys.argv) < 2:
+    print("Usage: python graph.py data.csv [output_dir]")
+    sys.exit(1)
+
+FILE = sys.argv[1]
+OUTDIR = sys.argv[2] if len(sys.argv) > 2 else "graphs"
+
+os.makedirs(OUTDIR, exist_ok=True)
+
+# === LOAD ===
+df = pd.read_csv(FILE)
+
+required_cols = ["datetime", "profit", "buy_in"]
+for col in required_cols:
+    if col not in df.columns:
+        print(f"Missing column: {col}")
+        sys.exit(1)
+
+df["datetime"] = pd.to_datetime(df["datetime"], errors="coerce")
+df = df.dropna(subset=["datetime"])
+df = df.sort_values("datetime")
+
+# === CLEAN NUMERIC ===
+df["profit"] = pd.to_numeric(df["profit"], errors="coerce").fillna(0)
+df["buy_in"] = pd.to_numeric(df["buy_in"], errors="coerce").fillna(0)
+
+# === CUMULATIVE PROFIT ===
+df["cum_profit"] = df["profit"].cumsum()
+
+plt.figure()
+plt.plot(df["datetime"], df["cum_profit"])
+plt.title("Cumulative Profit")
+plt.xlabel("Time")
+plt.ylabel("€")
+plt.xticks(rotation=45)
+plt.tight_layout()
+plt.savefig(f"{OUTDIR}/cum_profit.png")
+plt.close()
+
+# === PROFIT PER GAME ===
+plt.figure()
+plt.scatter(range(len(df)), df["profit"])
+plt.title("Profit per Game")
+plt.xlabel("Game #")
+plt.ylabel("€")
+plt.tight_layout()
+plt.savefig(f"{OUTDIR}/profit_scatter.png")
+plt.close()
+
+# === ROI BY CATEGORY (SAFE) ===
+if "category" in df.columns:
+    df_valid = df[df["buy_in"] > 0]
+
+    if not df_valid.empty:
+        roi = df_valid.groupby("category").apply(
+            lambda x: x["profit"].sum() / x["buy_in"].sum()
+        )
+
+        plt.figure()
+        roi.plot(kind="bar")
+        plt.title("ROI by Category")
+        plt.xlabel("Category")
+        plt.ylabel("ROI")
+        plt.tight_layout()
+        plt.savefig(f"{OUTDIR}/roi_category.png")
+        plt.close()
+
+# === SESSION PERFORMANCE ===
+if "session" in df.columns:
+    session_profit = df.groupby("session")["profit"].sum()
+
+    plt.figure()
+    session_profit.plot(kind="bar")
+    plt.title("Profit by Session")
+    plt.xlabel("Session")
+    plt.ylabel("€")
+    plt.tight_layout()
+    plt.savefig(f"{OUTDIR}/session_profit.png")
+    plt.close()
+
+# === POSITION DISTRIBUTION ===
+if "position" in df.columns:
+    pos_counts = df["position"].value_counts()
+
+    plt.figure()
+    pos_counts.plot(kind="bar")
+    plt.title("Position Distribution")
+    plt.xlabel("Position")
+    plt.ylabel("Count")
+    plt.tight_layout()
+    plt.savefig(f"{OUTDIR}/positions.png")
+    plt.close()
+
+print(f"✅ Graphs saved in: {OUTDIR}")

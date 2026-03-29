@@ -1,0 +1,23 @@
+#!/bin/bash
+
+BASE_DIR=${1:-"/tmp"}
+
+if [ -z "$BASE_DIR" ]; then
+    echo "usage: $0 <base_dir>"
+    exit 1
+fi
+
+DOCKER_DIR="$BASE_DIR/docker"
+SRC_DIR="$BASE_DIR/AOO"
+
+mkdir -p "$DOCKER_DIR" "$SRC_DIR"
+
+cd "$DOCKER_DIR" || exit 1
+wget https://svn.apache.org/repos/asf/openoffice/devtools/build-scripts/4.2.0/containers/linux/Dockerfile
+
+docker build -t aoo_centos .
+
+cd "$SRC_DIR" || exit 1
+git clone https://gitbox.apache.org/repos/asf/openoffice.git .
+
+docker run -ti -v "$SRC_DIR:/workspace/AOO" aoo_centos
