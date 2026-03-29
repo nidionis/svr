@@ -57,7 +57,6 @@ def recherche_duckduckgo(session, query, n):
         if link:
             results.append((title, link))
 
-    time.sleep(random.uniform(1.5, 3.5))
     return results
 
 
@@ -89,6 +88,7 @@ def main(argc, argv):
         print(f"URL: {link}")
         snippet = extract_text(session, link, args.chars)
         print(f"Extrait: {snippet}")
+    time.sleep(random.uniform(1.5, 3.5))
 
 
 if __name__ == "__main__":
